@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employee Self-service - Dongjin Global HRM</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <style>
+      body {
+        background-color: #f8f9fa;
+        font-family: Arial, sans-serif;
+      }
+      .header {
+        background-color: #005566;
+        color: white;
+        text-align: center;
+      }
+      .wizard-nav {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      .wizard-nav .nav-link {
+        flex: 1;
+        text-align: center;
+        background-color: #e9ecef;
+        border: 1px solid #005566;
+        border-radius: 0;
+        margin-right: -1px;
+        color: #005566;
+      }
+      .wizard-nav .nav-link.active {
+        background-color: #005566;
+        color: white;
+      }
+      .tab-pane {
+        display: none;
+      }
+      .tab-pane.active {
+        display: block;
+      }
+      .progress {
+        margin-bottom: 20px;
+      }
+      .required::after {
+        content: " *";
+        color: red;
+      }
+      .form-control.is-invalid {
+        border-color: red;
+      }
+      @media (max-width: 768px) {
+        .search-bar {
+          padding: 0 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="header">
+      <h1>Employee Self-service - Dongjin Global HRM</h1>
+      <p>Mã NV: 25091101 (Giả định đăng nhập)</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+      <!-- Progress Bar -->
+      <div class="progress">
+        <div
+          class="progress-bar"
+          role="progressbar"
+          style="width: 50%"
+          aria-valuenow="50"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          Bước 1/2
+        </div>
+      </div>
+
+      <!-- Wizard Navigation -->
+      <ul class="nav wizard-nav" id="wizardTab" role="tablist">
+        <li class="nav-item">
+          <a
+            class="nav-link active"
+            id="personal-tab"
+            data-bs-toggle="tab"
+            href="#personalTab"
+            role="tab"
+            >Thông tin cá nhân</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="finance-tab"
+            data-bs-toggle="tab"
+            href="#financeTab"
+            role="tab"
+            >Thông tin tài chính</a
+          >
+        </li>
+      </ul>
+
+      <!-- Wizard Content -->
+      <div class="tab-content">
+        <!-- Step 1: Thông tin cá nhân -->
+        <div class="tab-pane fade show active" id="personalTab">
+          <h2>Thông tin cá nhân</h2>
+          <form id="personalForm">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="fullName" class="form-label required">Họ Tên</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fullName"
+                  placeholder="Nhập họ và tên"
+                  required
+                  value="Nguyễn Văn An"
+                />
+                <div class="invalid-feedback">Vui lòng nhập họ tên.</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="gender" class="form-label required"
+                  >Giới Tính</label
+                >
+                <select class="form-select" id="gender" required>
+                  <option value="Nam">Nam</option>
+                  <option value="Nữ">Nữ</option>
+                  <option value="Khác">Khác</option>
+                </select>
+                <div class="invalid-feedback">Vui lòng chọn giới tính.</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="dob" class="form-label required">Ngày Sinh</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="dob"
+                  required
+                  value="1990-05-10"
+                />
+                <div class="invalid-feedback">Vui lòng chọn ngày sinh.</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="maritalStatus" class="form-label required"
+                  >Tình Trạng Hôn Nhân</label
+                >
+                <select class="form-select" id="maritalStatus" required>
+                  <option value="Độc thân">Độc thân</option>
+                  <option value="Đã kết hôn">Đã kết hôn</option>
+                </select>
+                <div class="invalid-feedback">
+                  Vui lòng chọn tình trạng hôn nhân.
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="dependants" class="form-label"
+                  >Số Người Phụ Thuộc</label
+                >
+                <input
+                  type="number"
+                  class="form-control"
+                  id="dependants"
+                  min="0"
+                  placeholder="Nhập số người phụ thuộc"
+                  value="0"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="cccd" class="form-label required">CCCD</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="cccd"
+                  placeholder="Nhập CCCD 12 số"
+                  required
+                  pattern="\d{12}"
+                  value="123456789012"
+                />
+                <div class="invalid-feedback">CCCD phải là 12 số.</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="issueDate" class="form-label required"
+                  >Ngày Cấp CCCD</label
+                >
+                <input
+                  type="date"
+                  class="form-control"
+                  id="issueDate"
+                  required
+                  value="2015-01-01"
+                />
+                <div class="invalid-feedback">Vui lòng chọn ngày cấp CCCD.</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="issuePlace" class="form-label required"
+                  >Nơi Cấp CCCD</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="issuePlace"
+                  placeholder="Nhập nơi cấp CCCD"
+                  required
+                  value="Sài Gòn "
+                />
+                <div class="invalid-feedback">Vui lòng nhập nơi cấp CCCD.</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="permanentAddress" class="form-label required"
+                  >Địa Chỉ Thường Trú</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="permanentAddress"
+                  placeholder="Nhập địa chỉ thường trú"
+                  required
+                  value="123 xã Long Hải, Sài Gòn "
+                />
+                <div class="invalid-feedback">
+                  Vui lòng nhập địa chỉ thường trú.
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="currentAddress" class="form-label required"
+                  >Địa Chỉ Hiện Tại</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="currentAddress"
+                  placeholder="Nhập địa chỉ hiện tại"
+                  required
+                  value="123 xã Long Hải, Sài Gòn "
+                />
+                <div class="invalid-feedback">
+                  Vui lòng nhập địa chỉ hiện tại.
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="phone" class="form-label required"
+                  >Số Điện Thoại</label
+                >
+                <input
+                  type="tel"
+                  class="form-control"
+                  id="phone"
+                  placeholder="Nhập số điện thoại 10 số"
+                  required
+                  pattern="0\d{9}"
+                  value="0901234567"
+                />
+                <div class="invalid-feedback">
+                  Số điện thoại phải là 10 số, bắt đầu bằng 0.
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="personalEmail" class="form-label"
+                  >Email Cá Nhân</label
+                >
+                <input
+                  type="email"
+                  class="form-control"
+                  id="personalEmail"
+                  placeholder="Nhập email cá nhân"
+                  value="an.nguyen@gmail.com"
+                />
+                <div class="invalid-feedback">Vui lòng nhập email hợp lệ.</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 mb-3">
+                <label for="portraitFile" class="form-label"
+                  >Ảnh Chân Dung</label
+                >
+                <input
+                  type="file"
+                  class="form-control"
+                  id="portraitFile"
+                  accept="image/*"
+                />
+              </div>
+            </div>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="nextBtn"
+              onclick="nextStep()"
+            >
+              Tiếp tục
+            </button>
+          </form>
+        </div>
+
+        <!-- Step 2: Thông tin tài chính -->
+        <div class="tab-pane fade" id="financeTab">
+          <h2>Thông tin tài chính</h2>
+          <form id="financeForm">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="bhxhNumber" class="form-label">Mã Số BHXH</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="bhxhNumber"
+                  placeholder="Nhập mã BHXH 10 số"
+                  pattern="\d{10}"
+                  value="1234567890"
+                />
+                <div class="invalid-feedback">Mã BHXH phải là 10 số.</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="taxCode" class="form-label">Mã Số Thuế</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="taxCode"
+                  placeholder="Nhập mã số thuế 10 hoặc 13 số"
+                  pattern="\d{10}(\d{3})?"
+                  value="1234567899"
+                />
+                <div class="invalid-feedback">
+                  Mã số thuế phải là 10 hoặc 13 số.
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="bankName" class="form-label required"
+                  >Ngân Hàng</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="bankName"
+                  placeholder="Nhập tên ngân hàng (VD: MB Bank)"
+                  required
+                  value="MB Bank"
+                />
+                <div class="invalid-feedback">Vui lòng nhập tên ngân hàng.</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="bankAccount" class="form-label required"
+                  >Số Tài Khoản</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="bankAccount"
+                  placeholder="Nhập số tài khoản 8-20 số"
+                  required
+                  pattern="\d{8,20}"
+                  value="123456789"
+                />
+                <div class="invalid-feedback">
+                  Số tài khoản phải là 8-20 số.
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="submitBtn"
+              onclick="submitForm()"
+            >
+              Hoàn thành
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="prevBtn"
+              onclick="prevStep()"
+            >
+              Quay lại
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script>
+      let currentStep = 0;
+      const steps = ["personalTab", "financeTab"];
+
+      function updateWizard() {
+        document
+          .querySelectorAll(".wizard-nav .nav-link")
+          .forEach((tab, index) => {
+            tab.classList.toggle("active", index === currentStep);
+          });
+        document.querySelectorAll(".tab-pane").forEach((pane, index) => {
+          pane.classList.toggle("active", index === currentStep);
+          pane.classList.toggle("show", index === currentStep); // Thêm dòng này
+        });
+        document.getElementById("nextBtn").style.display =
+          currentStep === 0 ? "inline-block" : "none";
+        document.getElementById("submitBtn").style.display =
+          currentStep === 1 ? "inline-block" : "none";
+        document.getElementById("prevBtn").style.display =
+          currentStep === 1 ? "inline-block" : "none";
+        document.querySelector(".progress-bar").style.width = `${
+          (currentStep + 1) * 50
+        }%`;
+        document.querySelector(".progress-bar").textContent = `Bước ${
+          currentStep + 1
+        }/2`;
+      }
+
+      function nextStep() {
+        const form = document.getElementById("personalForm");
+        if (form.checkValidity()) {
+          currentStep = 1;
+          updateWizard();
+        } else {
+          form.reportValidity();
+        }
+      }
+
+      function prevStep() {
+        if (currentStep > 0) {
+          currentStep--;
+          updateWizard();
+        }
+      }
+
+      function submitForm() {
+        const personalForm = document.getElementById("personalForm");
+        const financeForm = document.getElementById("financeForm");
+        if (personalForm.checkValidity() && financeForm.checkValidity()) {
+          // Thay đổi: Hiển thị trang xác nhận
+          document.body.innerHTML = `
+      <div class="d-flex flex-column justify-content-center align-items-center" style="min-height: 100vh; background: #f8f9fa;">
+        <div class="card shadow p-4" style="max-width: 400px;">
+          <div class="text-center mb-3" style="font-size:2rem;">🎉</div>
+          <h3 class="text-center mb-3">Thông tin của bạn đã được gửi thành công!</h3>
+          <div class="mb-2"><b>Mã nhân viên:</b> 25091101</div>
+          <div class="mb-2"><b>Ngày gửi:</b> 12/09/2025</div>
+          <div class="mt-3">👉 Bộ phận Nhân sự sẽ kiểm tra và phản hồi nếu có thiếu sót.</div>
+        </div>
+      </div>
+    `;
+        } else {
+          personalForm.reportValidity();
+          financeForm.reportValidity();
+        }
+      }
+
+      // Load data on page load
+      updateWizard();
+    </script>
+  </body>
+</html>
