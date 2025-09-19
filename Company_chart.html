@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HRM - Organizational Chart - Dongjin Global</title>
+    <style>
+        body {
+            zoom: 0.64;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            overflow: auto;
+        }
+        .container {
+            width: 100%;
+            min-height: 100vh;
+            background: #fff;
+            overflow-x: auto;
+            white-space: nowrap;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .org-chart {
+            display: inline-block;
+            padding: 20px;
+            vertical-align: top;
+            max-width: 100%;
+        }
+        /* Org Chart Styles with Connectors */
+        #org-chart-content {
+            --black: #333;
+            --white: #fff;
+            --gray: #ddd;
+            --line-height: 20px;
+        }
+        .org-chart-ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+            position: relative;
+        }
+        .org-chart-li {
+            display: inline-block;
+            position: relative;
+            margin: 10px;
+            vertical-align: top;
+        }
+        .node {
+            text-align: center;
+            padding: 15px;
+            border: 2px solid #4a90e2;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            min-width: 140px;
+            background: #fff;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+        }
+        .node.selected {
+            border-color: #2ecc71;
+            background: #e8f5e9;
+        }
+        .node h4 {
+            margin: 5px 0;
+            font-size: 18px;
+            color: #4a90e2;
+            font-weight: 600;
+        }
+        .node p {
+            margin: 0;
+            font-size: 22px;
+            color: #000000;
+        }
+        /* Interpreter inside Manager Node */
+        .interpreter {
+            display: block;
+            position: absolute;
+            left: 80px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 5px;
+            border: 2px solid #154629;
+            border-radius: 10px;
+            background: #f1f8e9;
+            font-size: 14px;
+            color: #2ecc71;
+            min-width: 80px;
+        }
+        /* Department Colors - mỗi bộ phận một màu riêng, đồng bộ */
+        .department-executive { background-color: #f8e1e1; border-color: #d32f2f; }
+        .department-support { background-color: #e1f8e1; border-color: #388e3c; }
+        .department-technical { background-color: #fff9c4; border-color: #fbc02d; }
+        .department-production { background-color: #e1f0fa; border-color: #1976d2; }
+        .department-it { background-color: #e1e1f8; border-color: #512da8; }
+        .department-hr { background-color: #fce4ec; border-color: #c2185b; }
+        .department-purchase { background-color: #e0f7fa; border-color: #0097a7; }
+        .department-import-export { background-color: #f3e5f5; border-color: #7b1fa2; }
+        .department-mfg { background-color: #e0f2f1; border-color: #00796b; }
+        .department-me { background-color: #f9fbe7; border-color: #afb42b; }
+        .department-qa { background-color: #f8bbd0; border-color: #ad1457; }
+        .department-pc { background-color: #e0f2f1; border-color: #00838f; }
+        .department-ie { background-color: #fff3e0; border-color: #f57c00; }
+        .department-thiet-ke-dien-tu { background-color: #e6f4ea; border-color: #388e3c; }
+        .department-phat-trien-dien-tu { background-color: #fce4ec; border-color: #c2185b; }
+        .department-accounting { background-color: #fff3e0; border-color: #fbc02d; }
+        .node.department-technical {
+            min-width: 220px;
+        }
+        /* Level Colors - màu viền/nền cho các bậc */
+        .node.level-president { border-color: #d32f2f !important; background-color: #ffeaea !important; }
+        .node.level-director { border-color: #1976d2 !important; background-color: #e3f2fd !important; }
+        .node.level-manager { border-color: #388e3c !important; background-color: #e8f5e9 !important; }
+        .node.level-staff { border-color: #fbc02d !important; background-color: #fffde7 !important; }
+    /* Màu riêng cho G. Manager và Director dưới G. Director */
+    .node.level-gmanager-director { border-color: #8e24aa !important; background-color: #ede7f6 !important; }
+    .node.level-supervisor { border-color: #4b676b !important; background-color: #c0f6fd !important; }
+        /* Connectors */
+        .org-chart-li::before {
+            content: "";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: var(--line-height);
+            background: var(--black);
+        }
+        .org-chart-ul::before {
+            content: "";
+            position: absolute;
+            top: -var(--line-height);
+            left: 50%;
+            width: 50%;
+            height: 2px;
+            background: var(--black);
+            transform: translateX(-50%);
+        }
+        .org-chart-li:first-child .org-chart-ul::before {
+            left: 0;
+            width: 100%;
+            transform: none;
+        }
+        .org-chart-li:only-child .org-chart-ul::before {
+            display: none;
+        }
+        .root .org-chart-li::before {
+            display: none;
+        }
+        .org-chart-ul.multi-child::before {
+            left: 0;
+            width: 100%;
+            transform: none;
+        }
+        /* Level 3 and Level 4 Layout */
+        .level-3 {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        .level-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 30px;
+            padding: 20px 0;
+            width: 100%;
+        }
+        .level-4 .org-chart-ul {
+            border-left: 1px solid #ddd;
+            padding-left: 15px;
+        }
+        .level-4 .org-chart-ul:first-child {
+            border-left: none;
+            padding-left: 0;
+        }
+            /* Vertical children layout for MFG Manager */
+            .vertical-children {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 18px;
+            }
+        .header {
+            text-align: center;
+            background: #4a90e2;
+            color: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        #add-employee-btn {
+            position: absolute;
+            top: 35px;
+            right: 65px;
+            padding: 10px 25px;
+            background: #2ecc71;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 28px;
+            font-weight: 500;
+            z-index: 2;
+        }
+        #add-employee-btn:hover {
+            background: #27ae60;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .close {
+            color: #888;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        form label {
+            display: block;
+            margin-top: 10px;
+            font-weight: 500;
+            color: #333;
+        }
+        form input, form select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        form button {
+            margin-top: 20px;
+            padding: 10px 25px;
+            background: #4a90e2;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        form button:hover {
+            background: #357abd;
+        }
+        .edit-link {
+            color: #4a90e2;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 15px;
+            display: block;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="org-chart">
+            <div class="header">
+                <h2>Dongjin Global - Organizational Chart (HRM System)</h2>
+            </div>
+            <button id="add-employee-btn">Thêm nhân viên mới</button>
+            <div id="org-chart-content">
+                <!-- Sơ đồ sẽ được render động ở đây bởi JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal cho thêm nhân viên mới -->
+    <div id="add-employee-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Thêm nhân viên mới</h3>
+            <form id="add-employee-form">
+                <label for="name">Tên:</label>
+                <input type="text" id="name" required>
+                
+                <label for="position">Vị trí:</label>
+                <input type="text" id="position" required>
+                
+                <label for="department">Bộ phận:</label>
+                <input type="text" id="department" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+                
+                <label for="phone">Điện thoại:</label>
+                <input type="text" id="phone" required>
+                
+                <label for="hireDate">Ngày vào làm:</label>
+                <input type="date" id="hireDate" required>
+                
+                <label for="salary">Mức lương:</label>
+                <input type="text" id="salary" required>
+                
+                <label for="parentId">Quản lý bởi (ID cha):</label>
+                <select id="parentId">
+                    <option value="">Không có (Cấp cao nhất)</option>
+                    <!-- Các option sẽ được populate động -->
+                </select>
+                
+                <label for="imageUrl">URL hình ảnh:</label>
+                <input type="text" id="imageUrl" placeholder="https://via.placeholder.com/60?text=Name" required>
+                
+                <button type="submit">Thêm</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal cho thông tin chi tiết nhân viên -->
+    <div id="detail-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Thông tin chi tiết nhân viên</h3>
+            <div id="detail-modal-content"></div>
+            <form id="update-image-form">
+                <label for="update-imageUrl">Cập nhật URL hình ảnh:</label>
+                <input type="text" id="update-imageUrl" placeholder="https://via.placeholder.com/60?text=Name">
+                <button type="submit">Lưu hình ảnh</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal cho chỉnh sửa nhân viên -->
+    <div id="edit-employee-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Chỉnh sửa nhân viên</h3>
+            <form id="edit-employee-form">
+                <input type="hidden" id="edit-id">
+                
+                <label for="edit-name">Tên:</label>
+                <input type="text" id="edit-name" required>
+                
+                <label for="edit-position">Vị trí:</label>
+                <input type="text" id="edit-position" required>
+                
+                <label for="edit-department">Bộ phận:</label>
+                <input type="text" id="edit-department" required>
+                
+                <label for="edit-email">Email:</label>
+                <input type="email" id="edit-email" required>
+                
+                <label for="edit-phone">Điện thoại:</label>
+                <input type="text" id="edit-phone" required>
+                
+                <label for="edit-hireDate">Ngày vào làm:</label>
+                <input type="date" id="edit-hireDate" required>
+                
+                <label for="edit-salary">Mức lương:</label>
+                <input type="text" id="edit-salary" required>
+                
+                <label for="edit-parentId">Quản lý bởi (ID cha):</label>
+                <select id="edit-parentId">
+                    <option value="">Không có (Cấp cao nhất)</option>
+                    <!-- Các option sẽ được populate động -->
+                </select>
+                
+                <label for="edit-imageUrl">URL hình ảnh:</label>
+                <input type="text" id="edit-imageUrl" required>
+                
+                <button type="submit">Lưu thay đổi</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Dữ liệu nhân viên với cấu trúc cha-con theo yêu cầu mới
+        let employeeData = {
+            1: { id: 1, name: "Mr Lee", position: "President", department: "Executive", email: "president@dongjinglobal.com", phone: "+84-123-456-789", hireDate: "2008-01-15", salary: "Confidential", imageUrl: "https://via.placeholder.com/60?text=President", parentId: null, children: [2] },
+            2: { id: 2, name: "Mr Woo", position: "G. Director", department: "Executive", email: "gdirector@dongjinglobal.com", phone: "+84-987-654-321", hireDate: "2013-03-20", salary: "High Level", imageUrl: "https://via.placeholder.com/60?text=G.+Director", parentId: 1, children: [5, 7, 8, 3, 9, 10, 11, 23] },
+            5: { id: 5, name: "Mr Shin", position: "G. Manager", department: "Production", email: "director.shin@dongjinglobal.com", phone: "+84-444-555-666", hireDate: "2015-09-05", salary: "Director", imageUrl: "https://via.placeholder.com/60?text=Director", parentId: 2, children: [12, 13, 14, 15, 6] },
+            7: { id: 7, name: "Mr Kim", position: "Director", department: "Technical", email: "director.kim@dongjinglobal.com", phone: "+84-555-666-777", hireDate: "2016-04-12", salary: "Director", imageUrl: "https://via.placeholder.com/60?text=Director", parentId: 2, children: [16, 17, 18] },
+            8: { id: 8, name: "Mr Quý", position: "G. Manager", department: "IT", email: "gmanager.quy@dongjinglobal.com", phone: "+84-666-777-888", hireDate: "2017-07-18", salary: "Senior", imageUrl: "https://via.placeholder.com/60?text=G+Manager", parentId: 2, children: [19] },
+            3: { id: 3, name: "Vy Huỳnh", position: "Interpreter", department: "Support", email: "interpreter.vy@dongjinglobal.com", phone: "+84-111-222-333", hireDate: "2020-06-10", salary: "Mid Level", imageUrl: "https://via.placeholder.com/60?text=Interpreter", parentId: 2, children: [] },
+            6: { id: 6, name: "Thảo Nguyên", position: "Interpreter", department: "Support", email: "interpreter.thaonguyen@dongjinglobal.com", phone: "+84-222-333-444", hireDate: "2021-01-15", salary: "Mid Level", imageUrl: "https://via.placeholder.com/60?text=Interpreter", parentId: 5, children: [] },
+            
+            9: { id: 9, name: "Mr Thuận", position: "HR Manager", department: "HR", email: "hr.manager@dongjinglobal.com", phone: "+84-777-888-999", hireDate: "2012-02-10", salary: "Manager", imageUrl: "https://via.placeholder.com/60?text=HR+Manager", parentId: 2, children: [91, 92, 93, 94] },
+            91: { id: 91, name: "Thuy", position: "Ass.Manager", department: "HR", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=1", parentId: 9, children: [] },
+            92: { id: 92, name: "Ngoc", position: "Staff", department: "HR", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=2", parentId: 9, children: [] },
+            93: { id: 93, name: "Luan", position: "Staff", department: "HR", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=3", parentId: 9, children: [] },
+            94: { id: 94, name: "Duyen", position: "Staff", department: "HR", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=4", parentId: 9, children: [] },
+
+            10: { id: 10, name: "Tâm", position: "Staff Purchase", department: "Purchase", email: "purchase.manager@dongjinglobal.com", phone: "+84-888-999-000", hireDate: "2014-05-20", salary: "Manager", imageUrl: "https://via.placeholder.com/60?text=Purchase+Manager", parentId: 2, children: [101] },
+            101: { id: 101, name: "Dung", position: "Staff Purchase", department: "HR", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=1", parentId: 10, children: [] },
+           
+            
+            11: { id: 11, name: "Ms Yến", position: "Im/Ex Supervisor", department: "Import/Export", email: "imexport.supervisor@dongjinglobal.com", phone: "+84-999-000-111", hireDate: "2015-08-15", salary: "Senior", imageUrl: "https://via.placeholder.com/60?text=Supervisor", parentId: 2, children: [111, 112] },
+            111: { id: 91, name: "Chi", position: "Staff", department: "Import/Export", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=1", parentId: 11, children: [] },
+            112: { id: 92, name: "Vân", position: "Staff", department: "Import/Export", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=2", parentId: 11, children: [] },
+            
+            23: { id: 23, name: "Xuân", position: "Accounting Manager", department: "Accounting", email: "accounting.manager@dongjinglobal.com", phone: "+84-111-222-333", hireDate: "2016-08-15", salary: "Senior", imageUrl: "https://via.placeholder.com/60?text=Accounting", parentId: 2, children: [231, 232, 233, 234] },
+            231: { id: 231, name: "Nguyệt", position: "Staff", department: "MFG", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=1", parentId: 23, children: [] },
+            232: { id: 232, name: "Ngân", position: "Staff", department: "MFG", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=2", parentId: 23, children: [] },
+            233: { id: 233, name: "Linh", position: "Staff", department: "MFG", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=3", parentId: 23, children: [] },
+            234: { id: 234, name: "", position: "Staff", department: "MFG", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=4", parentId: 23, children: [] },
+
+            12: { id: 12, name: "Mr Au", position: "MFG Manager", department: "MFG", email: "mfg.manager@dongjinglobal.com", phone: "+84-000-111-222", hireDate: "2017-01-20", salary: "Manager", imageUrl: "https://via.placeholder.com/60?text=MFG+Manager", parentId: 5, children: [121, 122, 123, 124,125] },
+            121: { id: 121, name: "Trân", position: "Staff 9B ENG, TUBE", department: "MFG", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=1", parentId: 12, children: [] },
+            122: { id: 122, name: "Tài", position: "Staff HDI, DH", department: "MFG", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=2", parentId: 12, children: [] },
+            123: { id: 123, name: "Nhi", position: "Staff PR310 U100", department: "MFG", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=3", parentId: 12, children: [] },
+            124: { id: 124, name: "Oanh", position: "Staff Cutting", department: "MFG", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=4", parentId: 12, children: [] },
+            125: { id: 125, name: "Liễu", position: "Staff LP", department: "MFG", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=4", parentId: 12, children: [] },
+            
+            13: { id: 13, name: "Thảo", position: "ME Staff Spare part", department: "ME", email: "me.manager@dongjinglobal.com", phone: "+84-111-222-333", hireDate: "2016-11-10", salary: "Manager", imageUrl: "https://via.placeholder.com/60?text=ME+Manager", parentId: 5, children: [130] },
+            130: { id: 301, name: "Phúc", position: "Staff Facility", department: "PC", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=1", parentId: 13, children: [] },
+            14: { id: 14, name: "Mr Như", position: "QA Manager", department: "QA", email: "qa.manager@dongjinglobal.com", phone: "+84-222-333-444", hireDate: "2018-04-05", salary: "Senior", imageUrl: "https://via.placeholder.com/60?text=QA+Manager", parentId: 5, children: [301,302] },
+            301: { id: 301, name: "Quí", position: "Supervisor QA, QC", department: "PC", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=1", parentId: 14, children: [] },
+            302: { id: 302, name: "Ngân", position: "Staff QC", department: "PC", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=2", parentId: 14, children: [] },
+            
+            15: { id: 15, name: "Ms Linh", position: "PC Manager", department: "PC", email: "pc.manager@dongjinglobal.com", phone: "+84-333-444-555", hireDate: "2015-07-12", salary: "Manager", imageUrl: "https://via.placeholder.com/60?text=PC+Manager", parentId: 5, children: [151, 152, 153, 154, 155] },
+            151: { id: 151, name: "Thu Chỉ", position: "Staff R/M PKI", department: "PC", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=1", parentId: 15, children: [] },
+            152: { id: 152, name: "Duyên", position: "Staff W/H PKI,DJC", department: "PC", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=2", parentId: 15, children: [] },
+            153: { id: 153, name: "Hà", position: "Staff R/M DJC", department: "PC", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=3", parentId: 15, children: [] },
+            154: { id: 154, name: "Trang", position: "Staff Plan PKI,DJC", department: "PC", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=4", parentId: 15, children: [] },
+            155: { id: 155, name: "Trọng", position: "Staff DJC Support", department: "PC", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=4", parentId: 15, children: [] },
+            
+            16: { id: 16, name: "Bích Tuyền", position: "IE Ass.Manager", department: "IE", email: "ie.manager@dongjinglobal.com", phone: "+84-444-555-666", hireDate: "2018-03-10", salary: "Manager", imageUrl: "https://via.placeholder.com/60?text=IE+Manager", parentId: 7, children: [161, 162] },
+            161: { id: 161, name: "Đạt", position: "Supervisor", department: "IE", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=1", parentId: 16, children: [] },
+            162: { id: 162, name: "Bình", position: "Ass.Manager", department: "IE", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=2", parentId: 16, children: [] },
+    
+            17: { id: 17, name: "", position: "Thiết kế Lead Manager", department: "Thiết kế điện tử", email: "design.lead@dongjinglobal.com", phone: "+84-555-666-777", hireDate: "2019-09-15", salary: "Senior", imageUrl: "https://via.placeholder.com/60?text=Design", parentId: 7, children: [171] },
+            171: { id: 171, name: "", position: "Staff", department: "Thiết kế điện tử Lead", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=1", parentId: 17, children: [] },
+
+            18: { id: 18, name: "", position: "Phát triển Lead Manager", department: "Phát triển điện tử", email: "dev.lead@dongjinglobal.com", phone: "+84-666-777-888", hireDate: "2020-06-01", salary: "Senior", imageUrl: "https://via.placeholder.com/60?text=Development", parentId: 7, children: [181] },
+            181: { id: 181, name: "", position: "Staff", department: "Phát triển điện tử Lead", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=1", parentId: 18, children: [] },
+
+            19: { id: 19, name: "Vượng", position: "IT Manager", department: "IT", email: "it.manager@dongjinglobal.com", phone: "+84-777-888-999", hireDate: "2019-02-15", salary: "Senior", imageUrl: "https://via.placeholder.com/60?text=IT+Manager", parentId: 8, children: [191, 192, 193, 194] },
+            191: { id: 191, name: "Sơn", position: "Ass.Manager", department: "IT", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=1", parentId: 19, children: [] },
+            192: { id: 192, name: "Quốc", position: "Staff", department: "IT", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://ibb.co/nNnbxZ9s", parentId: 19, children: [] },
+            193: { id: 193, name: "Phụng", position: "Staff", department: "IT", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=3", parentId: 19, children: [] },
+            194: { id: 194, name: "Thắng", position: "Staff", department: "IT", email: "", phone: "", hireDate: "", salary: "", imageUrl: "https://via.placeholder.com/60?text=4", parentId: 19, children: [] },
+            
+        
+        };
+
+        let nextId = 24; // ID tiếp theo cho nhân viên mới
+
+        // Hàm render sơ đồ tổ chức động với connectors và department colors
+        function renderOrgChart() {
+            const content = document.getElementById('org-chart-content');
+            content.innerHTML = '';
+
+            // Tìm root
+            const root = Object.values(employeeData).find(emp => emp.parentId === null);
+
+            // Hàm recursive build UL/LI structure with interpreters inside
+            // Exclude only true level-4 nodes (staff), not level-3 managers
+            const level4Ids = new Set([]); 
+           
+            function buildNode(emp, isRoot = false) {
+                const deptClass = `department-${emp.department.toLowerCase().replace(/\//g, '-').replace(/ /g, '-')}`;
+                let levelClass = '';
+                // Kiểm tra nếu là G. Manager hoặc Director và parent là G. Director
+                const parent = emp.parentId ? employeeData[emp.parentId] : null;
+                if ((emp.position === 'G. Manager' || emp.position === 'Director') && parent && parent.position === 'G. Director') {
+                    levelClass = 'level-gmanager-director';
+                } else if (emp.position.toLowerCase().includes('supervisor')) levelClass = 'level-supervisor';
+                else if (emp.position.toLowerCase().includes('president')) levelClass = 'level-president';
+                else if (emp.position.toLowerCase().includes('director')) levelClass = 'level-director';
+                else if (emp.position.toLowerCase().includes('manager')) levelClass = 'level-manager';
+                else if (emp.position.toLowerCase().includes('staff')) levelClass = 'level-staff';
+                let html = `<li class="org-chart-li${isRoot ? ' root' : ''}">
+                    <div class="node ${deptClass} ${levelClass}" data-id="${emp.id}" onclick="showDetails(${emp.id})" style="position:relative;">`;
+                // Add interpreter to the left of the manager's node
+                if (emp.children.some(childId => employeeData[childId].position === "Interpreter")) {
+                    const interpreterId = emp.children.find(childId => employeeData[childId].position === "Interpreter");
+                    const interpreter = employeeData[interpreterId];
+                    if (interpreter) {
+                        html += `<div class="interpreter" onclick="event.stopPropagation(); showDetails(${interpreterId})"><h4>${interpreter.position}</h4><p>${interpreter.name}</p></div>`;
+                    }
+                }
+                html += `<h4>${emp.position}</h4><p>${emp.name}</p>`;
+                html += '</div>';
+
+                    if (emp.children.length > 0) {
+                        let multiClass = emp.children.length > 1 ? ' multi-child' : '';
+                        // Hiển thị Nếu là MFG Manager hoặc PC Manager thì thêm class vertical-children
+                        if (emp.id === 12 || emp.id === 15 || emp.id === 14 || emp.id === 16 || emp.id === 19 || emp.id === 9 || emp.id === 10 || emp.id === 11 || emp.id === 23 || emp.id === 17 || emp.id === 18) {
+                            multiClass += ' vertical-children';
+                        }
+                        html += `<ul class=\"org-chart-ul${multiClass}\">`;
+                        // Filter out interpreters and level-4 children to avoid duplicate rendering
+                        const nonInterpreterChildren = emp.children.filter(childId => employeeData[childId].position !== "Interpreter" && !level4Ids.has(childId));
+                        nonInterpreterChildren.forEach(childId => {
+                            const child = employeeData[childId];
+                            html += buildNode(child);
+                        });
+                        html += '</ul>';
+                    }
+
+                html += '</li>';
+                return html;
+            }
+
+            const chartHtml = `<ul class="org-chart-ul root">${buildNode(root, true)}</ul>`;
+
+            // Wrap level 3 and level 4 with appropriate layouts
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(chartHtml, 'text/html');
+            const level3 = doc.querySelector('.org-chart-ul.multi-child');
+            if (level3) {
+                level3.classList.add('level-3');
+
+                // Group level 4 under respective level 3 managers
+                const sections = [
+                    { managerId: 5, children: [] }, // Mr. Shin: ME, QA, PC (exclude MFG Manager)
+                    { managerId: 7, children: [] },     // Mr. Kim: IE, Thiết kế điện tử, Phát triển điện tử
+                    { managerId: 8, children: [] },             // Mr. Quý: IT
+                    
+                ];
+
+                sections.forEach((section, index) => {
+                    const managerNode = level3.querySelector(`.node[data-id="${section.managerId}"]`);
+                    if (managerNode) {
+                        // Create a wrapper for each section to allow vertical divider
+                        const sectionWrapper = document.createElement('div');
+                        sectionWrapper.classList.add('level-4-section');
+                        // Move the main org-chart-ul.multi-child (manager's direct children) into the wrapper if not already moved
+                        const mainUl = managerNode.parentElement.querySelector('.org-chart-ul.multi-child:not(.level-4)');
+                        if (mainUl && !mainUl.classList.contains('level-4-main-attached')) {
+                            mainUl.classList.add('level-4-main-attached');
+                            sectionWrapper.appendChild(mainUl);
+                        }
+                        // Now create the smaller level-4 ul and append below
+                        const ul = document.createElement('ul');
+                        ul.classList.add('org-chart-ul', 'multi-child', 'level-4');
+                        section.children.forEach(childId => {
+                            const child = employeeData[childId];
+                            const li = document.createElement('li');
+                            li.classList.add('org-chart-li');
+                            li.innerHTML = `<div class="node department-${child.department.toLowerCase().replace(/\//g, '-').replace(/ /g, '-')}" data-id="${child.id}" onclick="showDetails(${child.id})">
+                                <h4>${child.position}</h4><p>${child.name}</p></div>`;
+                            ul.appendChild(li);
+                        });
+                        sectionWrapper.appendChild(ul);
+                        managerNode.parentElement.appendChild(sectionWrapper);
+                        // Mark for later divider insertion
+                        sectionWrapper.setAttribute('data-section-index', index);
+                    }
+                });
+            }
+            content.innerHTML = doc.body.innerHTML;
+
+            // After rendering, add vertical dividers between level-4 sections
+            const orgChartContent = document.getElementById('org-chart-content');
+            const allSections = orgChartContent.querySelectorAll('.level-4-section');
+            for (let i = 1; i < allSections.length; i++) {
+                if (i > 0) {
+                    // Add divider before each section except the first
+                    const divider = document.createElement('div');
+                    divider.classList.add('level-4-divider');
+                    orgChartContent.insertBefore(divider, allSections[i]);
+                }
+            }
+
+            // Add CSS for vertical dividers between level-4 sections
+            const styleId = 'level-4-divider-style';
+            if (!document.getElementById(styleId)) {
+                const style = document.createElement('style');
+                style.id = styleId;
+                style.innerHTML = `
+                    .level-4-flex-container {
+                        display: flex;
+                        justify-content: center;
+                        align-items: stretch;
+                        gap: 0;
+                        margin-top: 20px;
+                        margin-bottom: 20px;
+                        position: relative;
+                    }
+                    .level-4-section {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        min-width: 180px;
+                        min-height: 220px;
+                        position: relative;
+                    }
+                    .org-chart-ul.multi-child.level-4 {
+                        transform: scale(0.85);
+                        margin-top: 18px;
+                        margin-bottom: 0;
+                        margin-left: auto;
+                        margin-right: auto;
+                        width: 220px;
+                        min-width: 220px;
+                    }
+                    /* Vertical line between sections, except the first */
+                    .level-4-section:not(:first-child)::before {
+                        content: "";
+                        position: absolute;
+                        left: -18px;
+                        top: 0;
+                        height: 100%;
+                        width: 4px;
+                        background: #e74c3c;
+                        border-radius: 2px;
+                        z-index: 10;
+                        box-shadow: 0 0 2px #e74c3c;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        // Hiển thị chi tiết với popup modal
+        function showDetails(id) {
+            document.querySelectorAll('.node').forEach(node => node.classList.remove('selected'));
+            const selectedNode = document.querySelector(`.node[data-id="${id}"]`);
+            if (selectedNode) selectedNode.classList.add('selected');
+
+            const data = employeeData[id];
+            if (data) {
+                const modalContent = document.getElementById('detail-modal-content');
+                modalContent.innerHTML = `
+                    <img src="${data.imageUrl}" alt="${data.name}" style="border-radius: 5px; width: 60px;">
+                    <h4>${data.name}</h4>
+                    <p><strong>Vị trí:</strong> ${data.position}</p>
+                    <p><strong>Bộ phận:</strong> ${data.department}</p>
+                    <p><strong>Email:</strong> ${data.email}</p>
+                    <p><strong>Điện thoại:</strong> ${data.phone}</p>
+                    <p><strong>Ngày vào làm:</strong> ${data.hireDate}</p>
+                    <p><strong>Mức lương:</strong> ${data.salary}</p>
+                    <span class="edit-link" onclick="openEditModal(${id})">Chỉnh sửa nhân viên</span>
+                `;
+                document.getElementById('detail-modal').style.display = 'block';
+                document.getElementById('update-imageUrl').value = data.imageUrl; // Pre-fill image URL
+            }
+        }
+
+        // Populate select options cho parentId
+        function populateParentOptions(selectElement, currentId = null) {
+            selectElement.innerHTML = '<option value="">Không có (Cấp cao nhất)</option>';
+            Object.values(employeeData).forEach(emp => {
+                if (emp.id !== currentId) {
+                    const option = document.createElement('option');
+                    option.value = emp.id;
+                    option.textContent = `${emp.name} (${emp.position})`;
+                    selectElement.appendChild(option);
+                }
+            });
+        }
+
+        // Modal thêm nhân viên
+        const addModal = document.getElementById('add-employee-modal');
+        const addBtn = document.getElementById('add-employee-btn');
+        const addClose = addModal.querySelector('.close');
+        const addForm = document.getElementById('add-employee-form');
+
+        addBtn.onclick = () => {
+            populateParentOptions(document.getElementById('parentId'));
+            addModal.style.display = 'block';
+        };
+
+        addClose.onclick = () => addModal.style.display = 'none';
+
+        window.addEventListener('click', (event) => {
+            if (event.target === addModal || event.target === detailModal || event.target === editModal) {
+                event.target.style.display = 'none';
+            }
+        });
+
+        addForm.onsubmit = (e) => {
+            e.preventDefault();
+            const newEmp = {
+                id: nextId++,
+                name: document.getElementById('name').value,
+                position: document.getElementById('position').value,
+                department: document.getElementById('department').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                hireDate: document.getElementById('hireDate').value,
+                salary: document.getElementById('salary').value,
+                imageUrl: document.getElementById('imageUrl').value,
+                parentId: document.getElementById('parentId').value || null,
+                children: []
+            };
+
+            employeeData[newEmp.id] = newEmp;
+
+            if (newEmp.parentId) {
+                employeeData[newEmp.parentId].children.push(newEmp.id);
+            }
+
+            renderOrgChart();
+            addModal.style.display = 'none';
+            addForm.reset();
+        };
+
+        // Modal chi tiết nhân viên
+        const detailModal = document.getElementById('detail-modal');
+        const detailClose = detailModal.querySelector('.close');
+        const updateImageForm = document.getElementById('update-image-form');
+
+        detailClose.onclick = () => detailModal.style.display = 'none';
+
+        updateImageForm.onsubmit = (e) => {
+            e.preventDefault();
+            const id = parseInt(document.querySelector('.node.selected')?.getAttribute('data-id'));
+            if (id && employeeData[id]) {
+                employeeData[id].imageUrl = document.getElementById('update-imageUrl').value;
+                showDetails(id); // Cập nhật lại modal với hình ảnh mới
+            }
+        };
+
+        // Modal chỉnh sửa nhân viên
+        const editModal = document.getElementById('edit-employee-modal');
+        const editClose = editModal.querySelector('.close');
+        const editForm = document.getElementById('edit-employee-form');
+
+        editClose.onclick = () => editModal.style.display = 'none';
+
+        function openEditModal(id) {
+            const data = employeeData[id];
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-name').value = data.name;
+            document.getElementById('edit-position').value = data.position;
+            document.getElementById('edit-department').value = data.department;
+            document.getElementById('edit-email').value = data.email;
+            document.getElementById('edit-phone').value = data.phone;
+            document.getElementById('edit-hireDate').value = data.hireDate;
+            document.getElementById('edit-salary').value = data.salary;
+            document.getElementById('edit-imageUrl').value = data.imageUrl;
+
+            const parentSelect = document.getElementById('edit-parentId');
+            populateParentOptions(parentSelect, id);
+            parentSelect.value = data.parentId || '';
+
+            editModal.style.display = 'block';
+        }
+
+        editForm.onsubmit = (e) => {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('edit-id').value);
+            const oldParentId = employeeData[id].parentId;
+            const newParentId = document.getElementById('edit-parentId').value || null;
+
+            // Cập nhật dữ liệu
+            employeeData[id].name = document.getElementById('edit-name').value;
+            employeeData[id].position = document.getElementById('edit-position').value;
+            employeeData[id].department = document.getElementById('edit-department').value;
+            employeeData[id].email = document.getElementById('edit-email').value;
+            employeeData[id].phone = document.getElementById('edit-phone').value;
+            employeeData[id].hireDate = document.getElementById('edit-hireDate').value;
+            employeeData[id].salary = document.getElementById('edit-salary').value;
+            employeeData[id].imageUrl = document.getElementById('edit-imageUrl').value;
+            employeeData[id].parentId = newParentId;
+
+            // Xử lý thay đổi parent
+            if (oldParentId !== newParentId) {
+                if (oldParentId) {
+                    employeeData[oldParentId].children = employeeData[oldParentId].children.filter(childId => childId !== id);
+                }
+                if (newParentId) {
+                    employeeData[newParentId].children.push(id);
+                }
+            }
+
+            renderOrgChart();
+            showDetails(id);
+            editModal.style.display = 'none';
+        };
+
+        // Khởi tạo
+        renderOrgChart();
+    </script>
+</body>
+</html>
