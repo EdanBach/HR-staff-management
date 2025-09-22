@@ -71,18 +71,6 @@
     <!-- Main Content -->
     <div class="container mt-4">
       <!-- Progress Bar -->
-      <div class="progress">
-        <div
-          class="progress-bar"
-          role="progressbar"
-          style="width: 50%"
-          aria-valuenow="50"
-          aria-valuemin="0"
-          aria-valuemax="100"
-        >
-          Bước 1/2
-        </div>
-      </div>
 
       <!-- Wizard Navigation -->
       <ul class="nav wizard-nav" id="wizardTab" role="tablist">
@@ -94,16 +82,6 @@
             href="#personalTab"
             role="tab"
             >Thông tin cá nhân</a
-          >
-        </li>
-        <li class="nav-item">
-          <a
-            class="nav-link"
-            id="finance-tab"
-            data-bs-toggle="tab"
-            href="#financeTab"
-            role="tab"
-            >Thông tin tài chính</a
           >
         </li>
       </ul>
@@ -287,6 +265,59 @@
               </div>
             </div>
             <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="bankName"
+                        >Ngân Hàng</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="bankName"
+                        value="MSB Bank"
+                        readonly
+                      />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="bankAccount"
+                        >Số Tài Khoản MSB</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="bankAccount"
+                        placeholder="Nhập số tài khoản 8-20 số"
+                        required
+                        pattern="\d{8,20}"
+                      />
+                    </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="bhxhNumber" class="form-label">Mã Số BHXH</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="bhxhNumber"
+                  placeholder="Nhập mã BHXH 10 số"
+                  pattern="\d{10}"
+                 
+                />
+                <div class="invalid-feedback">Mã BHXH phải là 10 số.</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="taxCode" class="form-label">Mã Số Thuế</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="taxCode"
+                  placeholder="Nhập mã số thuế 10 hoặc 13 số"
+                  pattern="\d{10}(\d{3})?"
+                  
+                />
+                <div class="invalid-feedback">
+                  Mã số thuế phải là 10 hoặc 13 số.
+                </div>
+              </div>
+            </div>
               <div class="col-md-12 mb-3">
                 <label for="portraitFile" class="form-label"
                   >Ảnh Chân Dung</label
@@ -299,51 +330,8 @@
                 />
               </div>
             </div>
-            <button
-              type="button"
-              class="btn btn-primary"
-              id="nextBtn"
-              onclick="nextStep()"
-            >
-              Tiếp tục
-            </button>
-          </form>
-        </div>
 
-        <!-- Step 2: Thông tin tài chính -->
-        <div class="tab-pane fade" id="financeTab">
-          <h2>Thông tin tài chính</h2>
-          <form id="financeForm">
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="bhxhNumber" class="form-label">Mã Số BHXH</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="bhxhNumber"
-                  placeholder="Nhập mã BHXH 10 số"
-                  pattern="\d{10}"
-                  value="1234567890"
-                />
-                <div class="invalid-feedback">Mã BHXH phải là 10 số.</div>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="taxCode" class="form-label">Mã Số Thuế</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="taxCode"
-                  placeholder="Nhập mã số thuế 10 hoặc 13 số"
-                  pattern="\d{10}(\d{3})?"
-                  value="1234567899"
-                />
-                <div class="invalid-feedback">
-                  Mã số thuế phải là 10 hoặc 13 số.
-                </div>
-              </div>
-            </div>
-            <div class="row">
-            </div>
+            
             <button
               type="button"
               class="btn btn-primary"
@@ -351,19 +339,10 @@
               onclick="submitForm()"
             >
               Hoàn thành
-            </button>
-            <button
-              type="button"
-              class="btn btn-secondary"
-              id="prevBtn"
-              onclick="prevStep()"
-            >
-              Quay lại
-            </button>
+              </button>
           </form>
         </div>
-      </div>
-    </div>
+        </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -414,11 +393,9 @@
       }
 
       function submitForm() {
-        const personalForm = document.getElementById("personalForm");
-        const financeForm = document.getElementById("financeForm");
-        if (personalForm.checkValidity() && financeForm.checkValidity()) {
-          // Thay đổi: Hiển thị trang xác nhận
-          document.body.innerHTML = `
+  const personalForm = document.getElementById("personalForm");
+  if (personalForm.checkValidity()) {
+    document.body.innerHTML = `
       <div class="d-flex flex-column justify-content-center align-items-center" style="min-height: 100vh; background: #f8f9fa;">
         <div class="card shadow p-4" style="max-width: 400px;">
           <div class="text-center mb-3" style="font-size:2rem;">🎉</div>
@@ -429,11 +406,10 @@
         </div>
       </div>
     `;
-        } else {
-          personalForm.reportValidity();
-          financeForm.reportValidity();
-        }
-      }
+  } else {
+    personalForm.reportValidity();
+  }
+}
 
       // Load data on page load
       updateWizard();
