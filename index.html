@@ -1,1351 +1,1004 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quản Lý Nhân Viên - HRM Dongjin Global</title>
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <!-- Custom CSS -->
-    <style>
-      body {
-        background-color: #f8f9fa;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-         zoom: 0.9;
-      }
-      .header {
-        background-color: #005566;
-        color: white;
-        padding: 15px;
-        text-align: center;
-        position: fixed;
-        top: 0;
-        width: 100%;
-        z-index: 1001; /* Cao hơn header bảng */
-      }
-      .container-fluid {
-        padding-top: 100px; /* Đủ chỗ cho header cố định */
-      }
-      .search-bar {
-        margin-bottom: 20px;
-        padding: 0 15px;
-      }
-      .table {
-        width: 100%;
-        table-layout: auto;
-        border-collapse: separate;
-        border-spacing: 0;
-      }
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản Lý Nhân Viên - HRM Dongjin Global</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Custom CSS -->
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      zoom: 0.9;
+    }
+
+    .header {
+      background-color: #005566;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1001;
+      /* Cao hơn header bảng */
+    }
+
+    .container-fluid {
+      padding-top: 100px;
+      /* Đủ chỗ cho header cố định */
+    }
+
+    .search-bar {
+      margin-bottom: 20px;
+      padding: 0 15px;
+    }
+
+    .table {
+      width: 100%;
+      table-layout: auto;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    .table th,
+    .table td {
+      border: 1px solid #dee2e6;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .table th {
+      background-color: #005566;
+      color: white;
+      position: sticky;
+      top: 0;
+      /* Cố định trên cùng */
+      z-index: 1000;
+      /* Cao hơn nội dung bảng */
+    }
+
+    .table-responsive {
+      max-height: calc(100vh - 140px);
+      /* Điều chỉnh để phù hợp với header và search bar */
+      overflow-y: auto;
+      overflow-x: auto;
+    }
+
+    .btn-primary {
+      background-color: #005566;
+      border-color: #005566;
+    }
+
+    .modal-header {
+      background-color: #005566;
+      color: white;
+    }
+
+    .wizard-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .wizard-nav .nav-link {
+      flex: 1;
+      text-align: center;
+      background-color: #e9ecef;
+      border: 1px solid #005566;
+      border-radius: 0;
+      margin-right: -1px;
+      color: #005566;
+    }
+
+    .wizard-nav .nav-link.active {
+      background-color: #005566;
+      color: white;
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    .required::after {
+      content: " *";
+      color: red;
+    }
+
+    @media (max-width: 768px) {
+
       .table th,
       .table td {
-        border: 1px solid #dee2e6;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        font-size: 14px;
       }
-      .table th {
-        background-color: #005566;
-        color: white;
-        position: sticky;
-        top: 0; /* Cố định trên cùng */
-        z-index: 1000; /* Cao hơn nội dung bảng */
+
+      .btn-sm {
+        padding: 5px 10px;
       }
-      .table-responsive {
-        max-height: calc(
-          100vh - 140px
-        ); /* Điều chỉnh để phù hợp với header và search bar */
-        overflow-y: auto;
-        overflow-x: auto;
-      }
-      .btn-primary {
-        background-color: #005566;
-        border-color: #005566;
-      }
-      .modal-header {
-        background-color: #005566;
-        color: white;
-      }
-      .wizard-nav {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-      }
-      .wizard-nav .nav-link {
-        flex: 1;
-        text-align: center;
-        background-color: #e9ecef;
-        border: 1px solid #005566;
-        border-radius: 0;
-        margin-right: -1px;
-        color: #005566;
-      }
-      .wizard-nav .nav-link.active {
-        background-color: #005566;
-        color: white;
-      }
-      .tab-pane {
+
+      .hide-mobile {
         display: none;
       }
-      .tab-pane.active {
-        display: block;
-      }
-      .required::after {
-        content: " *";
-        color: red;
-      }
-      @media (max-width: 768px) {
-        .table th,
-        .table td {
-          font-size: 14px;
-        }
-        .btn-sm {
-          padding: 5px 10px;
-        }
-        .hide-mobile {
-          display: none;
-        }
-        .search-bar {
-          padding: 0 10px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Header -->
-    <div class="header d-flex align-items-center justify-content-between">
-      <h1 class="mb-0">Quản Lý Nhân Viên - Dongjin Global HRM</h1>
-      <a href="Company_chart.html" target="_blank">
-        <button class="btn btn-primary" type="button">
-          Organizational Chart
-        </button>
-      </a>
-      <a
-        href="employee_self_service.html"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="ms-3"
-      >
-        <button class="btn btn-primary" type="button">
-          Employee Self-service
-        </button>
-      </a>
-    </div>
 
-    <!-- Main Content -->
-    <div class="container-fluid">
-      <!-- Tabs -->
-      <ul class="nav nav-tabs" id="hrTab" role="tablist">
-        <li class="nav-item">
-          <a
-            class="nav-link active"
-            id="employees-tab"
-            data-bs-toggle="tab"
-            href="#employees"
-            role="tab"
-            >Danh sách nhân viên</a
-          >
-        </li>
-        <li class="nav-item">
-          <a
-            class="nav-link"
-            id="pending-tab"
-            data-bs-toggle="tab"
-            href="#pending"
-            role="tab"
-            >Phê duyệt</a
-          >
-        </li>
-      </ul>
+      .search-bar {
+        padding: 0 10px;
+      }
+    }
+  </style>
+</head>
 
-      <!-- Tab Content -->
-      <div class="tab-content">
-        <!-- Tab Danh sách nhân viên -->
-        <div class="tab-pane fade show active" id="employees" role="tabpanel">
-          <!-- Search and Filters -->
-          <div class="row search-bar">
-            <div class="col-md-4 col-sm-12 mb-3">
-              <input
-                type="text"
-                class="form-control"
-                id="searchInput"
-                placeholder="Tìm kiếm theo tên, mã NV, CCCD..."
-              />
-            </div>
-            <div class="col-md-3 col-sm-6 mb-3">
-              <select
-                class="form-select"
-                id="employeeTypeFilter"
-                onchange="updateDepartmentFilter()"
-              >
-                <option value="">Tất cả loại nhân viên</option>
-                <option value="Thời vụ">Công nhân thời vụ</option>
-                <option value="Office DJG">Office DJG</option>
-                <option value="Nhân viên DJG">Nhân viên DJG</option>
-              </select>
-            </div>
-            <div class="col-md-3 col-sm-6 mb-3">
-              <select class="form-select" id="departmentFilter">
-                <option value="">Tất cả bộ phận</option>
-              </select>
-            </div>
-            <div class="col-md-2 col-sm-12 mb-3 d-flex justify-content-end">
-              <button
-                class="btn btn-primary me-2"
-                data-bs-toggle="modal"
-                data-bs-target="#employeeModal"
-                onclick="resetModal('add')"
-              >
-                Thêm Mới
-              </button>
-              <button class="btn btn-secondary me-2" onclick="importExcel()">
-                Import Excel
-              </button>
-              <button class="btn btn-secondary" onclick="exportReport()">
-                Xuất Exel
-              </button>
-            </div>
+<body>
+  <!-- Header -->
+  <div class="header d-flex align-items-center justify-content-between">
+    <h1 class="mb-0">Quản Lý Nhân Viên - Dongjin Global HRM</h1>
+    <a href="Company_chart.html" target="_blank">
+      <button class="btn btn-primary" type="button">
+        Organizational Chart
+      </button>
+    </a>
+    <a href="employee_self_service.html" target="_blank" rel="noopener noreferrer" class="ms-3">
+      <button class="btn btn-primary" type="button">
+        Employee Self-service
+      </button>
+    </a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container-fluid">
+    <!-- Tabs -->
+    <ul class="nav nav-tabs" id="hrTab" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="employees-tab" data-bs-toggle="tab" href="#employees" role="tab">Danh sách nhân
+          viên</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="pending-tab" data-bs-toggle="tab" href="#pending" role="tab">Phê duyệt</a>
+      </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- Tab Danh sách nhân viên -->
+      <div class="tab-pane fade show active" id="employees" role="tabpanel">
+        <!-- Search and Filters -->
+        <div class="row search-bar">
+          <div class="col-md-4 col-sm-12 mb-3">
+            <input type="text" class="form-control" id="searchInput" placeholder="Tìm kiếm theo tên, mã NV, CCCD..." />
           </div>
-
-          <!-- Employee Table -->
-          <div class="table-responsive">
-            <table class="table table-striped table-bordered" id="employeeTable">
-              <thead>
-                <tr>
-                  <th style="width: 8%">Mã NV</th>
-                  <th style="width: 12%">Họ Tên</th>
-                  <th style="width: 10%">Loại NV</th>
-                  <th style="width: 10%">Bộ Phận</th>
-                  <th style="width: 8%">Line (FA)</th>
-                  <th style="width: 10%">Ngày Phỏng Vấn</th>
-                  <th style="width: 10%">Ngày Nhận Việc</th>
-                  <th class="hide-mobile" style="width: 10%">CCCD</th>
-                  <th class="hide-mobile" style="width: 8%">SĐT</th>
-                  <th class="hide-mobile" style="width: 10%">Hợp Đồng</th>
-                  <th class="hide-mobile" style="width: 8%">BHXH</th>
-                  <th class="hide-mobile" style="width: 10%">Đơn Vị Thời Vụ</th>
-                  <th class="hide-mobile" style="width: 6%">Active</th>
-                  <th class="hide-mobile" style="width: 10%">Create Date</th>
-                  <th class="hide-mobile" style="width: 10%">Update Date</th>
-                  <th class="hide-mobile" style="width: 8%">Update User</th>
-                  <th style="width: 10%">Hành Động</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Sample Data -->
-                <tr>
-                  <td>25091101</td>
-                  <td>Nguyễn Văn An</td>
-                  <td>Thời vụ</td>
-                  <td>FA</td>
-                  <td>Step1.2</td>
-                  <td>2020-05-20</td>
-                  <td>2020-06-01</td>
-                  <td>123456789012</td>
-                  <td>0901234567</td>
-                  <td>(01/06/2020 - 31/05/2023)</td>
-                  <td>1234567890</td>
-                  <td>Công ty ABC</td>
-                  <td>Active</td>
-                  <td>2020-05-20</td>
-                  <td>2023-05-01</td>
-                  <td>hr_admin</td>
-                  <td>
-                    <button
-                      class="btn btn-sm btn-primary"
-                      onclick="viewEmployeeSingleTab(this)"
-                    >
-                      Xem
-                    </button>
-                    <button
-                      class="btn btn-sm btn-danger"
-                      onclick="deleteEmployee(this)"
-                    >
-                      Xóa
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>25091102</td>
-                  <td>Trần Thị Bình</td>
-                  <td>Office DJG</td>
-                  <td>Office IT</td>
-                  <td>-</td>
-                  <td>2021-07-25</td>
-                  <td>2021-08-10</td>
-                  <td>987654321098</td>
-                  <td>0912345678</td>
-                  <td>Vô thời hạn</td>
-                  <td>0987654321</td>
-                  <td>-</td>
-                  <td>Active</td>
-                  <td>2021-07-25</td>
-                  <td>2023-08-10</td>
-                  <td>hr_admin</td>
-                  <td>
-                    <button
-                      class="btn btn-sm btn-info"
-                      onclick="editEmployee(this)"
-                    >
-                      Xem
-                    </button>
-                    <button
-                      class="btn btn-sm btn-danger"
-                      onclick="deleteEmployee(this)"
-                    >
-                      Xóa
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>25091103</td>
-                  <td>Lê Văn Cường</td>
-                  <td>Nhân viên DJG</td>
-                  <td>PR310</td>
-                  <td>-</td>
-                  <td>2019-03-01</td>
-                  <td>2019-03-15</td>
-                  <td>456789123456</td>
-                  <td>0923456789</td>
-                  <td>(15/03/2019 - 14/03/2024)</td>
-                  <td>4567891234</td>
-                  <td>-</td>
-                  <td>Active</td>
-                  <td>2019-03-01</td>
-                  <td>2023-03-15</td>
-                  <td>hr_admin</td>
-                  <td>
-                    <button
-                      class="btn btn-sm btn-info"
-                      onclick="editEmployee(this)"
-                    >
-                      Xem
-                    </button>
-                    <button
-                      class="btn btn-sm btn-danger"
-                      onclick="deleteEmployee(this)"
-                    >
-                      Xóa
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>25091104</td>
-                  <td>Phạm Thị Dung</td>
-                  <td>Nhân viên DJG</td>
-                  <td>Tổng vụ</td>
-                  <td>-</td>
-                  <td>2021-12-25</td>
-                  <td>2022-01-10</td>
-                  <td>789123456789</td>
-                  <td>0934567890</td>
-                  <td>(10/01/2022 - 09/01/2023)</td>
-                  <td>7891234567</td>
-                  <td>-</td>
-                  <td>Not Active</td>
-                  <td>2021-12-25</td>
-                  <td>2023-01-09</td>
-                  <td>hr_admin</td>
-                  <td>
-                    <button
-                      class="btn btn-sm btn-info"
-                      onclick="editEmployee(this)"
-                    >
-                      Xem
-                    </button>
-                    <button
-                      class="btn btn-sm btn-danger"
-                      onclick="deleteEmployee(this)"
-                    >
-                      Xóa
-                    </button>
-                  </td>
-                </tr>
-                <!-- Thêm dữ liệu mẫu để kiểm tra cuộn -->
-                <tr>
-                  <td colspan="17">25050202</td>
-                </tr>
-                <tr>
-                  <td colspan="17">25050202 </td>
-                </tr>
-                <tr>
-                  <td colspan="17">25050202 </td>
-                </tr>
-                <tr>
-                  <td colspan="17">25050202 </td>
-                </tr>
-                <tr>
-                  <td colspan="17">25050202 </td>
-                </tr>
-                <tr>
-                  <td colspan="17">25050202 </td>
-                </tr>
-                <tr>
-                  <td colspan="17">25050202 </td>
-                </tr>
-                <tr>
-                  <td colspan="17">25050202 </td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="col-md-3 col-sm-6 mb-3">
+            <select class="form-select" id="employeeTypeFilter" onchange="updateDepartmentFilter()">
+              <option value="">Tất cả loại nhân viên</option>
+              <option value="Thời vụ">Công nhân thời vụ</option>
+              <option value="Office DJG">Office DJG</option>
+              <option value="Nhân viên DJG">Nhân viên DJG</option>
+            </select>
           </div>
-
-          <!-- Pagination -->
-          <nav aria-label="Pagination">
-            <ul class="pagination justify-content-center">
-              <li class="page-item disabled">
-                <a class="page-link" href="#">Trước</a>
-              </li>
-              <li class="page-item active"><a class="page-link" href="#">1</a></li>
-              <li class="page-item"><a class="page-link" href="#">2</a></li>
-              <li class="page-item"><a class="page-link" href="#">Sau</a></li>
-            </ul>
-          </nav>
+          <div class="col-md-3 col-sm-6 mb-3">
+            <select class="form-select" id="departmentFilter">
+              <option value="">Tất cả bộ phận</option>
+            </select>
+          </div>
+          <div class="col-md-2 col-sm-12 mb-3 d-flex justify-content-end">
+            <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#employeeModal"
+              onclick="resetModal('add')">
+              Thêm Mới
+            </button>
+            <button class="btn btn-secondary me-2" onclick="importExcel()">
+              Import Excel
+            </button>
+            <button class="btn btn-secondary" onclick="exportReport()">
+              Xuất Exel
+            </button>
+          </div>
         </div>
 
-        <!-- Tab Phê duyệt -->
-        <div class="tab-pane fade" id="pending" role="tabpanel">
-          <div class="table-responsive">
-            <table class="table table-striped table-bordered" id="pendingTable">
-              <thead>
-                <tr>
-                  <th style="width: 10%">Mã NV</th>
-                  <th style="width: 15%">Họ Tên</th>
-                  <th style="width: 15%">Ngày Submit</th>
-                  <th style="width: 20%">Hành Động</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Sample Pending Requests (to be replaced with real data from employee_self_service) -->
-                <tr>
-                  <td>25091105</td>
-                  <td>Trần Văn Dũng</td>
-                  <td>2025-09-18</td>
-                  <td>
-                    <button
-                      class="btn btn-sm btn-info me-2"
-                      data-bs-toggle="modal"
-                      data-bs-target="#viewModal"
-                      onclick="viewRequest(this)"
-                    >
-                      Xem
-                    </button>
-                    <button
-                      class="btn btn-sm btn-success me-2"
-                      onclick="approveRequest(this)"
-                    >
-                      Phê Duyệt
-                    </button>
-                    <button
-                      class="btn btn-sm btn-danger"
-                      onclick="rejectRequest(this)"
-                    >
-                      Từ Chối
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>25091106</td>
-                  <td>Ngô Thị Hồng</td>
-                  <td>2025-09-17</td>
-                  <td>
-                    <button
-                      class="btn btn-sm btn-info me-2"
-                      data-bs-toggle="modal"
-                      data-bs-target="#viewModal"
-                      onclick="viewRequest(this)"
-                    >
-                      Xem
-                    </button>
-                    <button
-                      class="btn btn-sm btn-success me-2"
-                      onclick="approveRequest(this)"
-                    >
-                      Phê Duyệt
-                    </button>
-                    <button
-                      class="btn btn-sm btn-danger"
-                      onclick="rejectRequest(this)"
-                    >
-                      Từ Chối
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <!-- Employee Table -->
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered" id="employeeTable">
+            <thead>
+              <tr>
+                <th style="width: 8%">Mã NV</th>
+                <th style="width: 12%">Họ Tên</th>
+                <th style="width: 10%">Loại NV</th>
+                <th style="width: 10%">Bộ Phận</th>
+                <th style="width: 8%">Line (FA)</th>
+                <th style="width: 10%">Ngày Phỏng Vấn</th>
+                <th style="width: 10%">Ngày Nhận Việc</th>
+                <th class="hide-mobile" style="width: 10%">CCCD</th>
+                <th class="hide-mobile" style="width: 8%">SĐT</th>
+                <th class="hide-mobile" style="width: 10%">Hợp Đồng</th>
+                <th class="hide-mobile" style="width: 8%">BHXH</th>
+                <th class="hide-mobile" style="width: 10%">Đơn Vị Thời Vụ</th>
+                <th class="hide-mobile" style="width: 6%">Active</th>
+                <th class="hide-mobile" style="width: 10%">Create Date</th>
+                <th class="hide-mobile" style="width: 10%">Update Date</th>
+                <th class="hide-mobile" style="width: 8%">Update User</th>
+                <th style="width: 10%">Hành Động</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Sample Data -->
+              <tr>
+                <td>25091101</td>
+                <td>Nguyễn Văn An</td>
+                <td>Thời vụ</td>
+                <td>FA</td>
+                <td>Step1.2</td>
+                <td>2020-05-20</td>
+                <td>2020-06-01</td>
+                <td>123456789012</td>
+                <td>0901234567</td>
+                <td>(01/06/2020 - 31/05/2023)</td>
+                <td>1234567890</td>
+                <td>Công ty ABC</td>
+                <td>Active</td>
+                <td>2020-05-20</td>
+                <td>2023-05-01</td>
+                <td>hr_admin</td>
+                <td>
+                  <button class="btn btn-sm btn-primary" onclick="viewEmployeeSingleTab(this)">
+                    Xem
+                  </button>
+                  <button class="btn btn-sm btn-danger" onclick="deleteEmployee(this)">
+                    Xóa
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>25091102</td>
+                <td>Trần Thị Bình</td>
+                <td>Office DJG</td>
+                <td>Office IT</td>
+                <td>-</td>
+                <td>2021-07-25</td>
+                <td>2021-08-10</td>
+                <td>987654321098</td>
+                <td>0912345678</td>
+                <td>Vô thời hạn</td>
+                <td>0987654321</td>
+                <td>-</td>
+                <td>Active</td>
+                <td>2021-07-25</td>
+                <td>2023-08-10</td>
+                <td>hr_admin</td>
+                <td>
+                  <button class="btn btn-sm btn-info" onclick="editEmployee(this)">
+                    Xem
+                  </button>
+                  <button class="btn btn-sm btn-danger" onclick="deleteEmployee(this)">
+                    Xóa
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>25091103</td>
+                <td>Lê Văn Cường</td>
+                <td>Nhân viên DJG</td>
+                <td>PR310</td>
+                <td>-</td>
+                <td>2019-03-01</td>
+                <td>2019-03-15</td>
+                <td>456789123456</td>
+                <td>0923456789</td>
+                <td>(15/03/2019 - 14/03/2024)</td>
+                <td>4567891234</td>
+                <td>-</td>
+                <td>Active</td>
+                <td>2019-03-01</td>
+                <td>2023-03-15</td>
+                <td>hr_admin</td>
+                <td>
+                  <button class="btn btn-sm btn-info" onclick="editEmployee(this)">
+                    Xem
+                  </button>
+                  <button class="btn btn-sm btn-danger" onclick="deleteEmployee(this)">
+                    Xóa
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>25091104</td>
+                <td>Phạm Thị Dung</td>
+                <td>Nhân viên DJG</td>
+                <td>Tổng vụ</td>
+                <td>-</td>
+                <td>2021-12-25</td>
+                <td>2022-01-10</td>
+                <td>789123456789</td>
+                <td>0934567890</td>
+                <td>(10/01/2022 - 09/01/2023)</td>
+                <td>7891234567</td>
+                <td>-</td>
+                <td>Not Active</td>
+                <td>2021-12-25</td>
+                <td>2023-01-09</td>
+                <td>hr_admin</td>
+                <td>
+                  <button class="btn btn-sm btn-info" onclick="editEmployee(this)">
+                    Xem
+                  </button>
+                  <button class="btn btn-sm btn-danger" onclick="deleteEmployee(this)">
+                    Xóa
+                  </button>
+                </td>
+              </tr>
+              <!-- Thêm dữ liệu mẫu để kiểm tra cuộn -->
+              <tr>
+                <td colspan="17">25050202</td>
+              </tr>
+              <tr>
+                <td colspan="17">25050202 </td>
+              </tr>
+              <tr>
+                <td colspan="17">25050202 </td>
+              </tr>
+              <tr>
+                <td colspan="17">25050202 </td>
+              </tr>
+              <tr>
+                <td colspan="17">25050202 </td>
+              </tr>
+              <tr>
+                <td colspan="17">25050202 </td>
+              </tr>
+              <tr>
+                <td colspan="17">25050202 </td>
+              </tr>
+              <tr>
+                <td colspan="17">25050202 </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Pagination">
+          <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+              <a class="page-link" href="#">Trước</a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">Sau</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <!-- Tab Phê duyệt -->
+      <div class="tab-pane fade" id="pending" role="tabpanel">
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered" id="pendingTable">
+            <thead>
+              <tr>
+                <th style="width: 10%">Mã NV</th>
+                <th style="width: 15%">Họ Tên</th>
+                <th style="width: 15%">Ngày Submit</th>
+                <th style="width: 20%">Hành Động</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Sample Pending Requests (to be replaced with real data from employee_self_service) -->
+              <tr>
+                <td>25091105</td>
+                <td>Trần Văn Dũng</td>
+                <td>2025-09-18</td>
+                <td>
+                  <button class="btn btn-sm btn-info me-2" data-bs-toggle="modal" data-bs-target="#viewModal"
+                    onclick="viewRequest(this)">
+                    Xem
+                  </button>
+                  <button class="btn btn-sm btn-success me-2" onclick="approveRequest(this)">
+                    Phê Duyệt
+                  </button>
+                  <button class="btn btn-sm btn-danger" onclick="rejectRequest(this)">
+                    Từ Chối
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>25091106</td>
+                <td>Ngô Thị Hồng</td>
+                <td>2025-09-17</td>
+                <td>
+                  <button class="btn btn-sm btn-info me-2" data-bs-toggle="modal" data-bs-target="#viewModal"
+                    onclick="viewRequest(this)">
+                    Xem
+                  </button>
+                  <button class="btn btn-sm btn-success me-2" onclick="approveRequest(this)">
+                    Phê Duyệt
+                  </button>
+                  <button class="btn btn-sm btn-danger" onclick="rejectRequest(this)">
+                    Từ Chối
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Employee Modal (Add/Edit) -->
-    <div
-      class="modal fade"
-      id="employeeModal"
-      tabindex="-1"
-      aria-labelledby="employeeModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="employeeModalLabel">
-              Thêm Nhân Viên Mới
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form id="employeeForm">
-              <input type="hidden" id="editRowIndex" />
-              <!-- Wizard Navigation -->
-              <ul class="nav wizard-nav" id="wizardTab" role="tablist">
-                <li class="nav-item">
-                  <a
-                    class="nav-link active"
-                    id="personal-tab"
-                    data-bs-toggle="tab"
-                    href="#personal"
-                    role="tab"
-                    >Thông tin cá nhân</a
-                  >
-                </li>
-                <li class="nav-item">
-                  <a
-                    class="nav-link"
-                    id="job-tab"
-                    data-bs-toggle="tab"
-                    href="#job"
-                    role="tab"
-                    >Thông tin công việc</a
-                  >
-                </li>
-                <li class="nav-item">
-                  <a
-                    class="nav-link"
-                    id="contract-tab"
-                    data-bs-toggle="tab"
-                    href="#contract"
-                    role="tab"
-                    >Thông tin hợp đồng</a
-                  >
-                </li>
-                <li class="nav-item">
-                  <a
-                    class="nav-link"
-                    id="finance-tab"
-                    data-bs-toggle="tab"
-                    href="#finance"
-                    role="tab"
-                    >Thông tin tài chính</a
-                  >
-                </li>
-              </ul>
-              <!-- Wizard Content -->
-              <div class="tab-content">
-                <!-- Step 1: Thông tin cá nhân -->
-                <div class="tab-pane active" id="personal" role="tabpanel">
-                  <div class="row">
+  <!-- Employee Modal (Add/Edit) -->
+  <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="employeeModalLabel">
+            Thêm Nhân Viên Mới
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="employeeForm">
+            <input type="hidden" id="editRowIndex" />
+            <!-- Wizard Navigation -->
+            <ul class="nav wizard-nav" id="wizardTab" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="personal-tab" data-bs-toggle="tab" href="#personal" role="tab">Thông tin
+                  cá nhân</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="job-tab" data-bs-toggle="tab" href="#job" role="tab">Thông tin công việc</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="contract-tab" data-bs-toggle="tab" href="#contract" role="tab">Thông tin hợp
+                  đồng</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="finance-tab" data-bs-toggle="tab" href="#finance" role="tab">Thông tin tài
+                  chính</a>
+              </li>
+            </ul>
+            <!-- Wizard Content -->
+            <div class="tab-content">
+              <!-- Step 1: Thông tin cá nhân -->
+              <div class="tab-pane active" id="personal" role="tabpanel">
+                <div class="row">
 
-                    <div class="col-md-6 mb-3">
-  <label for="scanCMND">Scan CCCD :</label>
-  <input
-    type="text"
-    class="form-control"
-    id="scanCMND"
-    placeholder="Quét Barcode CCCD"
-    required
-  />
-</div>
+                  <div class="col-md-6 mb-3">
+                    <label for="scanCMND">Scan CCCD :</label>
+                    <input type="text" class="form-control" id="scanCMND" placeholder="Quét Barcode CCCD" required />
+                  </div>
 
-                    <div class="col-md-6 mb-3">
-                      <label for="fullName" class="form-label required"
-                        >Họ Tên</label
-                      >
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="fullName"
-                        placeholder="Nhập họ và tên"
-                        required
-                      />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="gender" class="form-label required"
-                        >Giới Tính</label
-                      >
-                      <select class="form-select" id="gender" required>
-                        <option value="">Chọn</option>
-                        <option value="Nam">Nam</option>
-                        <option value="Nữ">Nữ</option>
-                      </select>
-                    </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="fullName" class="form-label required">Họ Tên</label>
+                    <input type="text" class="form-control" id="fullName" placeholder="Nhập họ và tên" required />
                   </div>
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
-                      <label for="dob" class="form-label required"
-                        >Ngày Sinh</label
-                      >
-                      <input
-                        type="date"
-                        class="form-control"
-                        id="dob"
-                        required
-                      />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="maritalStatus" 
-                        >Tình Trạng Hôn Nhân</label
-                      >
-                      <select class="form-select" id="maritalStatus" required>
-                        <option value="">Chọn</option>
-                        <option value="Độc thân">Độc thân</option>
-                        <option value="Độc thân">Đã ly hôn</option>
-                        <option value="Đã kết hôn">Đã kết hôn</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
-                      <label for="dependants" class="form-label"
-                        >Số Người Phụ Thuộc</label
-                      >
-                      <input
-                        type="number"
-                        class="form-control"
-                        id="dependants"
-                        min="0"
-                        placeholder="Nhập số người phụ thuộc"
-                      />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="cccd" class="form-label required">CCCD</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="cccd"
-                        placeholder="Nhập CCCD 12 số"
-                        required
-                        pattern="\d{12}"
-                      />
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
-                      <label for="issueDate" class="form-label required"
-                        >Ngày Cấp CCCD</label
-                      >
-                      <input
-                        type="date"
-                        class="form-control"
-                        id="issueDate"
-                        required
-                      />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="issuePlace" class="form-label required"
-                        >Nơi Cấp CCCD</label
-                      >
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="issuePlace"
-                        placeholder="Nhập nơi cấp CCCD"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
-                      <label for="permanentAddress" class="form-label required"
-                        >Địa Chỉ Thường Trú</label
-                      >
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="permanentAddress"
-                        placeholder="Nhập địa chỉ thường trú"
-                        required
-                      />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="currentAddress" class="form-label required"
-                        >Địa Chỉ Hiện Tại</label
-                      >
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="currentAddress"
-                        placeholder="Nhập địa chỉ hiện tại"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
-                      <label for="phone" class="form-label required"
-                        >Số Điện Thoại</label
-                      >
-                      <input
-                        type="tel"
-                        class="form-control"
-                        id="phone"
-                        placeholder="Nhập số điện thoại 10 số"
-                        required
-                        pattern="0\d{9}"
-                      />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="personalEmail" class="form-label"
-                        >Email Cá Nhân</label
-                      >
-                      <input
-                        type="email"
-                        class="form-control"
-                        id="personalEmail"
-                        placeholder="Nhập email cá nhân"
-                      />
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-12 mb-3">
-                      <label for="portraitFile" class="form-label"
-                        >Ảnh Chân Dung</label
-                      >
-                      <input
-                        type="file"
-                        class="form-control"
-                        id="portraitFile"
-                        accept="image/*"
-                      />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="cccdFile" class="form-label">CCCD Mặt Trước</label>
-                      <input
-                        type="file"
-                        class="form-control"
-                        id="cccdFile"
-                        accept=".pdf,.jpg,.png"
-                      />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="cccdFile" class="form-label">CCCD Mặt Sau</label>
-                      <input
-                        type="file"
-                        class="form-control"
-                        id="cccdFile"
-                        accept=".pdf,.jpg,.png"
-                      />
-                    </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="gender" class="form-label required">Giới Tính</label>
+                    <select class="form-select" id="gender" required>
+                      <option value="">Chọn</option>
+                      <option value="Nam">Nam</option>
+                      <option value="Nữ">Nữ</option>
+                    </select>
                   </div>
                 </div>
-                <!-- Step 2: Thông tin công việc -->
-                <div class="tab-pane" id="job" role="tabpanel">
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
-                      <label for="empCode" class="form-label required"
-                        >Mã Nhân Viên</label
-                      >
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="empCode"
-                        readonly
-                        value="25091101"
-                      />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="employeeType" class="form-label required"
-                        >Loại Nhân Viên</label
-                      >
-                      <select
-                        class="form-select"
-                        id="employeeType"
-                        required
-                        onchange="updateDepartmentOptions()"
-                      >
-                        <option value="">Chọn</option>
-                        <option value="Thời vụ">Công nhân thời vụ</option>
-                        <option value="Office DJG">Office DJG</option>
-                        <option value="Nhân viên DJG">Nhân viên DJG</option>
-                      </select>
-                    </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="dob" class="form-label required">Ngày Sinh</label>
+                    <input type="date" class="form-control" id="dob" required />
                   </div>
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
-                      <label for="department" class="form-label required"
-                        >Bộ Phận</label
-                      >
-                      <select
-                        class="form-select"
-                        id="department"
-                        required
-                        onchange="toggleLineField()"
-                      >
-                        <option value="">Chọn</option>
-                      </select>
-                    </div>
-                    <div
-                      class="col-md-6 mb-3"
-                      id="lineField"
-                      style="display: none"
-                    >
-                      <label for="line" class="form-label required"
-                        >Line (FA)</label
-                      >
-                      <select class="form-select" id="line">
-                        <option value="">Chọn</option>
-                        <option value="Step1.2">Step1.2</option>
-                        <option value="Step3">Step3</option>
-                        <option value="DR/PA">DR/PA</option>
-                        <option value="RL/LH">RL/LH</option>
-                        <option value="HVAC">HVAC</option>
-                        <option value="AWD">AWD</option>
-                        <option value="FWD">FWD</option>
-                        <option value="LIH">LIH</option>
-                        <option value="BAT">BAT</option>
-                        <option value="HDI">HDI</option>
-                        <option value="DH">DH</option>
-                        <option value="U100">U100</option>
-                        <option value="TUBE">TUBE</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
-                      <label for="position" class="form-label required"
-                        >Vị Trí Công Việc</label
-                      >
-                      <select
-                        class="form-select"
-                        id="employeeType"
-                        required
-                        onchange="updateDepartmentOptions()"
-                      >
-                        <option value="">Chọn</option>
-                        <option value="Thời vụ">STAFF</option>
-                        <option value="Office DJG">SUPERVIOR</option>
-                        <option value="Nhân viên DJG">ASS.MANAGER</option>
-                        <option value="Thời vụ">MANAGER</option>
-                        <option value="Office DJG">WORKER</option>
-                        <option value="Nhân viên DJG">LEADER</option>
-                        <option value="Office DJG">FOREMAN</option>
-                        <option value="Nhân viên DJG">REWORK</option>
-                      </select>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="education" class="form-label required"
-                        >Trình Độ Học Vấn</label
-                      >
-                      <select class="form-select" id="education" required>
-                        <option value="">Chọn</option>
-                        <option value="THCS">THCS</option>
-                        <option value="THPT">THPT</option>
-                        <option value="Cao đẳng">Cao đẳng</option>
-                        <option value="Đại học">Đại học</option>
-                        <option value="Sau đại học">Sau đại học</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
-                      <label for="specialization" class="form-label"
-                        >Chuyên Môn</label
-                      >
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="specialization"
-                        placeholder="Nhập chuyên môn (VD: Điện tử, Kế toán)"
-                      />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="companyEmail" class="form-label"
-                        >Email Công Ty</label
-                      >
-                      <input
-                        type="email"
-                        class="form-control"
-                        id="companyEmail"
-                        placeholder="Nhập email công ty"
-                      />
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
-                      <label for="interviewDate" class="form-label required"
-                        >Ngày Phỏng Vấn</label
-                      >
-                      <input
-                        type="date"
-                        class="form-control"
-                        id="interviewDate"
-                        required
-                      />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="joinDate" class="form-label required"
-                        >Ngày Nhận Việc</label
-                      >
-                      <input
-                        type="date"
-                        class="form-control"
-                        id="joinDate"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
-                      <label for="employeeType"
-                        >Đơn Vị Thời Vụ</label
-                      >
-                      <select
-                        class="form-select"
-                        id="employeeType"
-                        required
-                        onchange="updateDepartmentOptions()"
-                      >
-                        <option value="">Chọn</option>
-                        <option value="Thời vụ">MD</option>
-                        <option value="Office DJG">TTD</option>
-                        <option value="Nhân viên DJG">PTT</option>
-                      </select>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="activeStatus" class="form-label required"
-                        >Active</label
-                      >
-                      <select class="form-select" id="activeStatus" required>
-                        <option value="Active">Active</option>
-                        <option value="Not Active">Not Active</option>
-                      </select>
-                    </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="maritalStatus">Tình Trạng Hôn Nhân</label>
+                    <select class="form-select" id="maritalStatus" required>
+                      <option value="">Chọn</option>
+                      <option value="Độc thân">Độc thân</option>
+                      <option value="Đã kết hôn">Đã ly hôn</option>
+                      <option value="Đã kết hôn">Đã kết hôn</option>
+                    </select>
                   </div>
                 </div>
-                <!-- Step 3: Thông tin hợp đồng -->
-                <div class="tab-pane" id="contract" role="tabpanel">
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
-                      <label for="contractType" class="form-label required"
-                        >Loại Hợp Đồng</label
-                      >
-                      <select class="form-select" id="contractType" required>
-                        <option value="">Chọn</option>
-                        <option value="Vô thời hạn">Vô thời hạn</option>
-                        <option value="Có thời hạn">Có thời hạn</option>
-                      </select>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="contractSignDate" class="form-label required"
-                        >Ngày Ký Hợp Đồng</label
-                      >
-                      <input
-                        type="date"
-                        class="form-control"
-                        id="contractSignDate"
-                        required
-                      />
-                    </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="dependants" class="form-label">Số Người Phụ Thuộc</label>
+                    <input type="number" class="form-control" id="dependants" min="0"
+                      placeholder="Nhập số người phụ thuộc" />
                   </div>
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
-                      <label for="contractStart" class="form-label required"
-                        >Ngày Bắt Đầu HĐ</label
-                      >
-                      <input
-                        type="date"
-                        class="form-control"
-                        id="contractStart"
-                        required
-                      />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="contractEnd" class="form-label"
-                        >Ngày Kết Thúc HĐ</label
-                      >
-                      <input
-                        type="date"
-                        class="form-control"
-                        id="contractEnd"
-                      />
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
-                      <label for="contractFile" class="form-label"
-                        >Hợp Đồng Scan</label
-                      >
-                      <input
-                        type="file"
-                        class="form-control"
-                        id="contractFile"
-                        accept=".pdf,.jpg,.png"
-                      />
-                    </div>
-                    
+                  <div class="col-md-6 mb-3">
+                    <label for="cccd" class="form-label required">CCCD</label>
+                    <input type="text" class="form-control" id="cccd" placeholder="Nhập CCCD 12 số" required
+                      pattern="\d{12}" />
                   </div>
                 </div>
-                <!-- Step 4: Thông tin tài chính -->
-                <div class="tab-pane" id="finance" role="tabpanel">
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
-                      <label for="bhxhNumber"
-                        >Mã Số BHXH</label
-                      >
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="bhxhNumber"
-                        placeholder="Nhập mã BHXH 10 số"
-                        required
-                        pattern="\d{10}"
-                      />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="taxCode"
-                        >Mã Số Thuế</label
-                      >
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="taxCode"
-                        placeholder="Nhập mã số thuế 10 hoặc 13 số"
-                        required
-                        pattern="\d{10}(\d{3})?"
-                      />
-                    </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="issueDate" class="form-label required">Ngày Cấp CCCD</label>
+                    <input type="date" class="form-control" id="issueDate" required />
                   </div>
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
-                      <label for="bankName"
-                        >Ngân Hàng</label
-                      >
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="bankName"
-                        value="MSB Bank"
-                        readonly
-                      />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="bankAccount"
-                        >Số Tài Khoản MSB</label
-                      >
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="bankAccount"
-                        placeholder="Nhập số tài khoản 8-20 số"
-                        required
-                        pattern="\d{8,20}"
-                      />
-                    </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="issuePlace" class="form-label required">Nơi Cấp CCCD</label>
+                    <input type="text" class="form-control" id="issuePlace" placeholder="Nhập nơi cấp CCCD" required />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="permanentAddress" class="form-label required">Địa Chỉ Thường Trú</label>
+                    <input type="text" class="form-control" id="permanentAddress" placeholder="Nhập địa chỉ thường trú"
+                      required />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="currentAddress" class="form-label required">Địa Chỉ Hiện Tại</label>
+                    <input type="text" class="form-control" id="currentAddress" placeholder="Nhập địa chỉ hiện tại"
+                      required />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="phone" class="form-label required">Số Điện Thoại</label>
+                    <input type="tel" class="form-control" id="phone" placeholder="Nhập số điện thoại 10 số" required
+                      pattern="0\d{9}" />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="personalEmail" class="form-label">Email Cá Nhân</label>
+                    <input type="email" class="form-control" id="personalEmail" placeholder="Nhập email cá nhân" />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 mb-3">
+                    <label for="portraitFile" class="form-label">Ảnh Chân Dung</label>
+                    <input type="file" class="form-control" id="portraitFile" accept="image/*" />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="cccdFile" class="form-label">CCCD Mặt Trước</label>
+                    <input type="file" class="form-control" id="cccdFile" accept=".pdf,.jpg,.png" />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="cccdFile" class="form-label">CCCD Mặt Sau</label>
+                    <input type="file" class="form-control" id="cccdFile" accept=".pdf,.jpg,.png" />
                   </div>
                 </div>
               </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              id="nextBtn"
-              onclick="nextStep()"
-            >
-              Lưu
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary d-none"
-              id="saveButton"
-              onclick="saveEmployee()"
-            >
-              Lưu
-            </button>
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Đóng
-            </button>
-          </div>
+              <!-- Step 2: Thông tin công việc -->
+              <div class="tab-pane" id="job" role="tabpanel">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="empCode" class="form-label required">Mã Nhân Viên</label>
+                    <input type="text" class="form-control" id="empCode" readonly value="25091101" />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="employeeType" class="form-label required">Loại Nhân Viên</label>
+                    <select class="form-select" id="employeeType" required onchange="updateDepartmentOptions()">
+                      <option value="">Chọn</option>
+                      <option value="Thời vụ">Công nhân thời vụ</option>
+                      <option value="Office DJG">Office DJG</option>
+                      <option value="Nhân viên DJG">Nhân viên DJG</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="department" class="form-label required">Bộ Phận</label>
+                    <select class="form-select" id="department" required onchange="toggleLineField()">
+                      <option value="">Chọn</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 mb-3" id="lineField" style="display: none">
+                    <label for="line" class="form-label required">Line (FA)</label>
+                    <select class="form-select" id="line">
+                      <option value="">Chọn</option>
+                      <option value="Step1.2">Step1.2</option>
+                      <option value="Step3">Step3</option>
+                      <option value="DR/PA">DR/PA</option>
+                      <option value="RL/LH">RL/LH</option>
+                      <option value="HVAC">HVAC</option>
+                      <option value="AWD">AWD</option>
+                      <option value="FWD">FWD</option>
+                      <option value="LIH">LIH</option>
+                      <option value="BAT">BAT</option>
+                      <option value="HDI">HDI</option>
+                      <option value="DH">DH</option>
+                      <option value="U100">U100</option>
+                      <option value="TUBE">TUBE</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="position" class="form-label required">Vị Trí Công Việc</label>
+                    <select class="form-select" id="employeeType" required onchange="updateDepartmentOptions()">
+                      <option value="">Chọn</option>
+                      <option value="Thời vụ">STAFF</option>
+                      <option value="Office DJG">SUPERVIOR</option>
+                      <option value="Nhân viên DJG">ASS.MANAGER</option>
+                      <option value="Thời vụ">MANAGER</option>
+                      <option value="Office DJG">WORKER</option>
+                      <option value="Nhân viên DJG">LEADER</option>
+                      <option value="Office DJG">FOREMAN</option>
+                      <option value="Nhân viên DJG">REWORK</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="education" class="form-label required">Trình Độ Học Vấn</label>
+                    <select class="form-select" id="education" required>
+                      <option value="">Chọn</option>
+                      <option value="THCS">THCS</option>
+                      <option value="THPT">THPT</option>
+                      <option value="Cao đẳng">Cao đẳng</option>
+                      <option value="Đại học">Đại học</option>
+                      <option value="Sau đại học">Sau đại học</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="specialization" class="form-label">Chuyên Môn</label>
+                    <input type="text" class="form-control" id="specialization"
+                      placeholder="Nhập chuyên môn (VD: Điện tử, Kế toán)" />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="companyEmail" class="form-label">Email Công Ty</label>
+                    <input type="email" class="form-control" id="companyEmail" placeholder="Nhập email công ty" />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="interviewDate" class="form-label required">Ngày Phỏng Vấn</label>
+                    <input type="date" class="form-control" id="interviewDate" required />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="joinDate" class="form-label required">Ngày Nhận Việc</label>
+                    <input type="date" class="form-control" id="joinDate" required />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="employeeType">Đơn Vị Thời Vụ</label>
+                    <select class="form-select" id="employeeType" required onchange="updateDepartmentOptions()">
+                      <option value="">Chọn</option>
+                      <option value="Thời vụ">MD</option>
+                      <option value="Office DJG">TTD</option>
+                      <option value="Nhân viên DJG">PTT</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="activeStatus" class="form-label required">Active</label>
+                    <select class="form-select" id="activeStatus" required>
+                      <option value="Active">Active</option>
+                      <option value="Not Active">Not Active</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <!-- Step 3: Thông tin hợp đồng -->
+              <div class="tab-pane" id="contract" role="tabpanel">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="contractType" class="form-label required">Loại Hợp Đồng</label>
+                    <select class="form-select" id="contractType" required>
+                      <option value="">Chọn</option>
+                      <option value="Vô thời hạn">Vô thời hạn</option>
+                      <option value="Có thời hạn">Có thời hạn</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="contractSignDate" class="form-label required">Ngày Ký Hợp Đồng</label>
+                    <input type="date" class="form-control" id="contractSignDate" required />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="contractStart" class="form-label required">Ngày Bắt Đầu HĐ</label>
+                    <input type="date" class="form-control" id="contractStart" required />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="contractEnd" class="form-label">Ngày Kết Thúc HĐ</label>
+                    <input type="date" class="form-control" id="contractEnd" />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="contractFile" class="form-label">Hợp Đồng Scan</label>
+                    <input type="file" class="form-control" id="contractFile" accept=".pdf,.jpg,.png" />
+                  </div>
+
+                </div>
+              </div>
+              <!-- Step 4: Thông tin tài chính -->
+              <div class="tab-pane" id="finance" role="tabpanel">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="bhxhNumber">Mã Số BHXH</label>
+                    <input type="text" class="form-control" id="bhxhNumber" placeholder="Nhập mã BHXH 10 số" required
+                      pattern="\d{10}" />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="taxCode">Mã Số Thuế</label>
+                    <input type="text" class="form-control" id="taxCode" placeholder="Nhập mã số thuế 10 hoặc 13 số"
+                      required pattern="\d{10}(\d{3})?" />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="bankName">Ngân Hàng</label>
+                    <input type="text" class="form-control" id="bankName" value="MSB Bank" readonly />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="bankAccount">Số Tài Khoản MSB</label>
+                    <input type="text" class="form-control" id="bankAccount" placeholder="Nhập số tài khoản 8-20 số"
+                      required pattern="\d{8,20}" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          </button>
+          <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextStep()">
+            Lưu
+          </button>
+          <button type="button" class="btn btn-primary d-none" id="saveButton" onclick="saveEmployee()">
+            Lưu
+          </button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Đóng
+          </button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- View Modal -->
-    <div
-      class="modal fade"
-      id="viewModal"
-      tabindex="-1"
-      aria-labelledby="viewModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="viewModalLabel">Xem Thông Tin</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body" id="viewContent">
-            <!-- Dynamic content will be populated here -->
-          </div>
+  <!-- View Modal -->
+  <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="viewModalLabel">Xem Thông Tin</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="viewContent">
+          <!-- Dynamic content will be populated here -->
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS -->
-    <script>
-  // Department Options
-  const departments = {
-    "Thời vụ": ["FA", "CTLP", "QC", "WH", "ME", "Admin", "QA"],
-    "Office DJG": [
-      "Office Acc",
-      "Office Admin",
-      "Office Cut/Lp",
-      "Office Ie",
-      "Office Im-Ex",
-      "Office IT",
-      "Office Maintenance",
-      "Office Production",
-      "Office Qa",
-      "Office Translate",
-      "Office Warehouse",
-      "Office Purchase",
-    ],
-    "Nhân viên DJG": [
-      "FA",
-      "CTLP",
-      "QC",
-      "WH",
-      "ME",
-      "Admin",
-      "QA",
-      "Tổng vụ",
-    ],
-  };
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script>
+    // Department Options
+    const departments = {
+      "Thời vụ": ["FA", "CTLP", "QC", "WH", "ME", "Admin", "QA"],
+      "Office DJG": [
+        "Office Acc",
+        "Office Admin",
+        "Office Cut/Lp",
+        "Office Ie",
+        "Office Im-Ex",
+        "Office IT",
+        "Office Maintenance",
+        "Office Production",
+        "Office Qa",
+        "Office Translate",
+        "Office Warehouse",
+        "Office Purchase",
+      ],
+      "Nhân viên DJG": [
+        "FA",
+        "CTLP",
+        "QC",
+        "WH",
+        "ME",
+        "Admin",
+        "QA",
+        "Tổng vụ",
+      ],
+    };
 
-  // Current step in wizard
-  let currentStep = 0;
-  const tabs = ["personal", "job", "contract", "finance"];
+    // Current step in wizard
+    let currentStep = 0;
+    const tabs = ["personal", "job", "contract", "finance"];
 
-  // Update Department Filter based on Employee Type
-  function updateDepartmentFilter() {
-    const employeeType = document.getElementById("employeeTypeFilter").value;
-    const departmentSelect = document.getElementById("departmentFilter");
-    departmentSelect.innerHTML = '<option value="">Tất cả bộ phận</option>';
-    if (employeeType && departments[employeeType]) {
-      departments[employeeType].forEach((dept) => {
-        const option = document.createElement("option");
-        option.value = dept;
-        option.textContent = dept;
-        departmentSelect.appendChild(option);
-      });
-    }
-    filterTable();
-  }
-
-  // Update Department Options in Modal
-  function updateDepartmentOptions() {
-    const employeeType = document.getElementById("employeeType").value;
-    const departmentSelect = document.getElementById("department");
-    departmentSelect.innerHTML = '<option value="">Chọn</option>';
-    if (employeeType && departments[employeeType]) {
-      departments[employeeType].forEach((dept) => {
-        const option = document.createElement("option");
-        option.value = dept;
-        option.textContent = dept;
-        departmentSelect.appendChild(option);
-      });
-    }
-    toggleLineField();
-  }
-
-  // Show/Hide Line Field for FA Department
-  function toggleLineField() {
-    const department = document.getElementById("department").value;
-    const lineField = document.getElementById("lineField");
-    if (department === "FA") {
-      lineField.style.display = "block";
-      document.getElementById("line").setAttribute("required", "required");
-    } else {
-      lineField.style.display = "none";
-      document.getElementById("line").removeAttribute("required");
-    }
-  }
-
-  // Search and Filter
-  document
-    .getElementById("searchInput")
-    .addEventListener("input", filterTable);
-  document
-    .getElementById("employeeTypeFilter")
-    .addEventListener("change", filterTable);
-  document
-    .getElementById("departmentFilter")
-    .addEventListener("change", filterTable);
-
-  function filterTable() {
-    const searchValue = document
-      .getElementById("searchInput")
-      .value.toLowerCase();
-    const typeValue = document.getElementById("employeeTypeFilter").value;
-    const deptValue = document.getElementById("departmentFilter").value;
-    const rows = document.querySelectorAll("#employeeTable tbody tr");
-
-    rows.forEach((row) => {
-      const name = row.cells[1].textContent.toLowerCase();
-      const code = row.cells[0].textContent.toLowerCase();
-      const cccd = row.cells[7].textContent.toLowerCase();
-      const type = row.cells[2].textContent;
-      const dept = row.cells[3].textContent;
-      const matchesSearch =
-        name.includes(searchValue) ||
-        code.includes(searchValue) ||
-        cccd.includes(searchValue);
-      const matchesType = !typeValue || type === typeValue;
-      const matchesDept = !deptValue || dept === deptValue;
-      row.style.display =
-        matchesSearch && matchesType && matchesDept ? "" : "none";
-    });
-  }
-
-  // Generate Employee Code (YYMMDDNN)
-  function generateEmpCode(sequence) {
-    const date = new Date();
-    const yymmdd = date
-      .toISOString()
-      .slice(2, 10)
-      .replace(/-/g, "")
-      .slice(0, 6); // 250911
-    const seq = String(sequence).padStart(2, "0"); // 01, 02, ...
-    return `${yymmdd}${seq}`;
-  }
-
-  // Reset Modal for Add/Edit
-  function resetModal(mode) {
-    const modalTitle = document.getElementById("employeeModalLabel");
-    const saveButton = document.getElementById("saveButton");
-    const nextBtn = document.getElementById("nextBtn");
-    const form = document.getElementById("employeeForm");
-    form.reset();
-    currentStep = 0;
-    updateWizard();
-    setTimeout(() => {
-      document.querySelectorAll('.wizard-nav .nav-link').forEach((tab, idx) => {
-        tab.classList.toggle('active', idx === 0);
-      });
-      document.querySelectorAll('.tab-pane').forEach((pane, idx) => {
-        if (idx === 0) {
-          pane.classList.add('show', 'active');
-        } else {
-          pane.classList.remove('show', 'active');
-        }
-      });
-    }, 100);
-    modalTitle.textContent =
-      mode === "add" ? "Thêm Nhân Viên Mới" : "Sửa Nhân Viên";
-    saveButton.textContent = mode === "add" ? "Lưu" : "Lưu Sửa";
-    saveButton.onclick = mode === "add" ? saveEmployee : updateEmployee;
-    document.getElementById("editRowIndex").value = "";
-    document.getElementById("empCode").value = generateEmpCode(1);
-    updateDepartmentOptions();
-    nextBtn.classList.remove("d-none");
-    saveButton.classList.add("d-none");
-  }
-
-  // Wizard Navigation
-  function updateWizard() {
-    document
-      .querySelectorAll(".wizard-nav .nav-link")
-      .forEach((tab, index) => {
-        tab.classList.toggle("active", index === currentStep);
-      });
-    document.querySelectorAll(".tab-pane").forEach((pane, index) => {
-      pane.classList.toggle("active", index === currentStep);
-    });
-    document
-      .getElementById("nextBtn")
-      .classList.toggle("d-none", currentStep === tabs.length - 1);
-    document
-      .getElementById("saveButton")
-      .classList.toggle("d-none", currentStep !== tabs.length - 1);
-  }
-
-  function prevStep() {
-    if (currentStep > 0) {
-      currentStep--;
-      updateWizard();
-    }
-  }
-
-  function nextStep() {
-    const currentFields = document.querySelector(
-      `#${tabs[currentStep]} [required]`
-    );
-    let valid = true;
-    if (currentFields) {
-      currentFields.forEach((field) => {
-        if (!field.checkValidity()) {
-          valid = false;
-          field.reportValidity();
-        }
-      });
-    }
-    if (valid && currentStep < tabs.length - 1) {
-      if (tabs[currentStep] === "job") {
-        const interviewDate = document.getElementById("interviewDate").value;
-        const joinDate = document.getElementById("joinDate").value;
-        if (
-          interviewDate &&
-          joinDate &&
-          new Date(joinDate) < new Date(interviewDate)
-        ) {
-          alert("Ngày nhận việc không thể nhỏ hơn ngày phỏng vấn!");
-          return;
-        }
-      } else if (tabs[currentStep] === "contract") {
-        const contractStart = document.getElementById("contractStart").value;
-        const contractEnd = document.getElementById("contractEnd").value;
-        if (
-          contractStart &&
-          contractEnd &&
-          new Date(contractEnd) < new Date(contractStart)
-        ) {
-          alert("Ngày kết thúc hợp đồng không thể nhỏ hơn ngày bắt đầu!");
-          return;
-        }
+    // Update Department Filter based on Employee Type
+    function updateDepartmentFilter() {
+      const employeeType = document.getElementById("employeeTypeFilter").value;
+      const departmentSelect = document.getElementById("departmentFilter");
+      departmentSelect.innerHTML = '<option value="">Tất cả bộ phận</option>';
+      if (employeeType && departments[employeeType]) {
+        departments[employeeType].forEach((dept) => {
+          const option = document.createElement("option");
+          option.value = dept;
+          option.textContent = dept;
+          departmentSelect.appendChild(option);
+        });
       }
-      currentStep++;
-      updateWizard();
+      filterTable();
     }
-  }
 
-  // Save Employee
-  function saveEmployee() {
-    const form = document.getElementById("employeeForm");
-    if (form.checkValidity()) {
-      const newRow = document.getElementById("employeeTable").insertRow();
-      newRow.innerHTML = `
+    // Update Department Options in Modal
+    function updateDepartmentOptions() {
+      const employeeType = document.getElementById("employeeType").value;
+      const departmentSelect = document.getElementById("department");
+      departmentSelect.innerHTML = '<option value="">Chọn</option>';
+      if (employeeType && departments[employeeType]) {
+        departments[employeeType].forEach((dept) => {
+          const option = document.createElement("option");
+          option.value = dept;
+          option.textContent = dept;
+          departmentSelect.appendChild(option);
+        });
+      }
+      toggleLineField();
+    }
+
+    // Show/Hide Line Field for FA Department
+    function toggleLineField() {
+      const department = document.getElementById("department").value;
+      const lineField = document.getElementById("lineField");
+      if (department === "FA") {
+        lineField.style.display = "block";
+        document.getElementById("line").setAttribute("required", "required");
+      } else {
+        lineField.style.display = "none";
+        document.getElementById("line").removeAttribute("required");
+      }
+    }
+
+    // Search and Filter
+    document
+      .getElementById("searchInput")
+      .addEventListener("input", filterTable);
+    document
+      .getElementById("employeeTypeFilter")
+      .addEventListener("change", filterTable);
+    document
+      .getElementById("departmentFilter")
+      .addEventListener("change", filterTable);
+
+    function filterTable() {
+      const searchValue = document
+        .getElementById("searchInput")
+        .value.toLowerCase();
+      const typeValue = document.getElementById("employeeTypeFilter").value;
+      const deptValue = document.getElementById("departmentFilter").value;
+      const rows = document.querySelectorAll("#employeeTable tbody tr");
+
+      rows.forEach((row) => {
+        const name = row.cells[1].textContent.toLowerCase();
+        const code = row.cells[0].textContent.toLowerCase();
+        const cccd = row.cells[7].textContent.toLowerCase();
+        const type = row.cells[2].textContent;
+        const dept = row.cells[3].textContent;
+        const matchesSearch =
+          name.includes(searchValue) ||
+          code.includes(searchValue) ||
+          cccd.includes(searchValue);
+        const matchesType = !typeValue || type === typeValue;
+        const matchesDept = !deptValue || dept === deptValue;
+        row.style.display =
+          matchesSearch && matchesType && matchesDept ? "" : "none";
+      });
+    }
+
+    // Generate Employee Code (YYMMDDNN)
+    function generateEmpCode(sequence) {
+      const date = new Date();
+      const yymmdd = date
+        .toISOString()
+        .slice(2, 10)
+        .replace(/-/g, "")
+        .slice(0, 6); // 250911
+      const seq = String(sequence).padStart(2, "0"); // 01, 02, ...
+      return `${yymmdd}${seq}`;
+    }
+
+    // Reset Modal for Add/Edit
+    function resetModal(mode) {
+      const modalTitle = document.getElementById("employeeModalLabel");
+      const saveButton = document.getElementById("saveButton");
+      const nextBtn = document.getElementById("nextBtn");
+      const form = document.getElementById("employeeForm");
+      form.reset();
+      currentStep = 0;
+      updateWizard();
+      setTimeout(() => {
+        document.querySelectorAll('.wizard-nav .nav-link').forEach((tab, idx) => {
+          tab.classList.toggle('active', idx === 0);
+        });
+        document.querySelectorAll('.tab-pane').forEach((pane, idx) => {
+          if (idx === 0) {
+            pane.classList.add('show', 'active');
+          } else {
+            pane.classList.remove('show', 'active');
+          }
+        });
+      }, 100);
+      modalTitle.textContent =
+        mode === "add" ? "Thêm Nhân Viên Mới" : "Sửa Nhân Viên";
+      saveButton.textContent = mode === "add" ? "Lưu" : "Lưu Sửa";
+      saveButton.onclick = mode === "add" ? saveEmployee : updateEmployee;
+      document.getElementById("editRowIndex").value = "";
+      document.getElementById("empCode").value = generateEmpCode(1);
+      updateDepartmentOptions();
+      nextBtn.classList.remove("d-none");
+      saveButton.classList.add("d-none");
+    }
+
+    // Wizard Navigation
+    function updateWizard() {
+      document
+        .querySelectorAll(".wizard-nav .nav-link")
+        .forEach((tab, index) => {
+          tab.classList.toggle("active", index === currentStep);
+        });
+      document.querySelectorAll(".tab-pane").forEach((pane, index) => {
+        pane.classList.toggle("active", index === currentStep);
+      });
+      document
+        .getElementById("nextBtn")
+        .classList.toggle("d-none", currentStep === tabs.length - 1);
+      document
+        .getElementById("saveButton")
+        .classList.toggle("d-none", currentStep !== tabs.length - 1);
+    }
+
+    function prevStep() {
+      if (currentStep > 0) {
+        currentStep--;
+        updateWizard();
+      }
+    }
+
+    function nextStep() {
+      const currentFields = document.querySelector(
+        `#${tabs[currentStep]} [required]`
+      );
+      let valid = true;
+      if (currentFields) {
+        currentFields.forEach((field) => {
+          if (!field.checkValidity()) {
+            valid = false;
+            field.reportValidity();
+          }
+        });
+      }
+      if (valid && currentStep < tabs.length - 1) {
+        if (tabs[currentStep] === "job") {
+          const interviewDate = document.getElementById("interviewDate").value;
+          const joinDate = document.getElementById("joinDate").value;
+          if (
+            interviewDate &&
+            joinDate &&
+            new Date(joinDate) < new Date(interviewDate)
+          ) {
+            alert("Ngày nhận việc không thể nhỏ hơn ngày phỏng vấn!");
+            return;
+          }
+        } else if (tabs[currentStep] === "contract") {
+          const contractStart = document.getElementById("contractStart").value;
+          const contractEnd = document.getElementById("contractEnd").value;
+          if (
+            contractStart &&
+            contractEnd &&
+            new Date(contractEnd) < new Date(contractStart)
+          ) {
+            alert("Ngày kết thúc hợp đồng không thể nhỏ hơn ngày bắt đầu!");
+            return;
+          }
+        }
+        currentStep++;
+        updateWizard();
+      }
+    }
+
+    // Save Employee
+    function saveEmployee() {
+      const form = document.getElementById("employeeForm");
+      if (form.checkValidity()) {
+        const newRow = document.getElementById("employeeTable").insertRow();
+        newRow.innerHTML = `
         <td>${document.getElementById("empCode").value}</td>
         <td>${document.getElementById("fullName").value}</td>
         <td>${document.getElementById("employeeType").value}</td>
@@ -1367,276 +1020,276 @@
           <button class="btn btn-sm btn-danger" onclick="deleteEmployee(this)">Xóa</button>
         </td>
       `;
-      alert("Nhân viên đã được thêm! (Prototype - Dữ liệu không lưu thực tế)");
-      document
-        .getElementById("employeeModal")
-        .querySelector(".btn-close")
-        .click();
-      form.reset();
-      resetModal("add");
-    } else {
-      form.reportValidity();
+        alert("Nhân viên đã được thêm! (Prototype - Dữ liệu không lưu thực tế)");
+        document
+          .getElementById("employeeModal")
+          .querySelector(".btn-close")
+          .click();
+        form.reset();
+        resetModal("add");
+      } else {
+        form.reportValidity();
+      }
     }
-  }
 
-  // Edit Employee
-  function editEmployee(button) {
-    const row = button.parentNode.parentNode;
-    const cells = row.cells;
-    resetModal("edit");
-    document.getElementById("editRowIndex").value = row.rowIndex;
+    // Edit Employee
+    function editEmployee(button) {
+      const row = button.parentNode.parentNode;
+      const cells = row.cells;
+      resetModal("edit");
+      document.getElementById("editRowIndex").value = row.rowIndex;
 
-    setTimeout(() => {
-      const empCodeInput = document.getElementById("empCode");
-      if (empCodeInput) empCodeInput.value = cells[0].textContent;
-      const fullNameInput = document.getElementById("fullName");
-      if (fullNameInput) fullNameInput.value = cells[1].textContent;
-      const employeeTypeSelect = document.getElementById("employeeType");
-      if (employeeTypeSelect) employeeTypeSelect.value = cells[2].textContent;
-      updateDepartmentOptions();
-      const departmentSelect = document.getElementById("department");
-      if (departmentSelect) departmentSelect.value = cells[3].textContent;
-      toggleLineField();
-      const lineSelect = document.getElementById("line");
-      if (lineSelect) lineSelect.value = cells[4].textContent !== "-" ? cells[4].textContent : "";
-      const interviewDateInput = document.getElementById("interviewDate");
-      if (interviewDateInput) interviewDateInput.value = cells[5].textContent;
-      const joinDateInput = document.getElementById("joinDate");
-      if (joinDateInput) joinDateInput.value = cells[6].textContent;
-      const cccdInput = document.getElementById("cccd");
-      if (cccdInput) cccdInput.value = cells[7].textContent;
-      const phoneInput = document.getElementById("phone");
-      if (phoneInput) phoneInput.value = cells[8].textContent;
-      const contract = cells[9].textContent;
-      const contractTypeSelect = document.getElementById("contractType");
-      if (contractTypeSelect) contractTypeSelect.value = contract.includes("Vô thời hạn") ? "Vô thời hạn" : "Có thời hạn";
-      const contractStartInput = document.getElementById("contractStart");
-      if (contractStartInput) contractStartInput.value = contract.match(/\d{4}-\d{2}-\d{2}/) ? contract.match(/\d{4}-\d{2}-\d{2}/)[0] : "";
-      const contractEndInput = document.getElementById("contractEnd");
-      if (contractEndInput) contractEndInput.value = contract.match(/ - \d{4}-\d{2}-\d{2}/) ? contract.match(/\d{4}-\d{2}-\d{2}/)[1] : "";
-      const bhxhNumberInput = document.getElementById("bhxhNumber");
-      if (bhxhNumberInput) bhxhNumberInput.value = cells[10].textContent;
-      const tempAgencyInput = document.getElementById("tempAgency");
-      if (tempAgencyInput) tempAgencyInput.value = cells[11].textContent !== "-" ? cells[11].textContent : "";
-      const activeStatusSelect = document.getElementById("activeStatus");
-      if (activeStatusSelect) activeStatusSelect.value = cells[12].textContent === "Not Active" ? "Not Active" : "Active";
-      const genderSelect = document.getElementById("gender");
-      if (genderSelect) genderSelect.value = "Nam"; // Giả lập
-      const dobInput = document.getElementById("dob");
-      if (dobInput) dobInput.value = "1990-01-01"; // Giả lập
-      const maritalStatusSelect = document.getElementById("maritalStatus");
-      if (maritalStatusSelect) maritalStatusSelect.value = "Độc thân"; // Giả lập
-      const dependantsInput = document.getElementById("dependants");
-      if (dependantsInput) dependantsInput.value = "0"; // Giả lập
-      const issueDateInput = document.getElementById("issueDate");
-      if (issueDateInput) issueDateInput.value = "2015-01-01"; // Giả lập
-      const issuePlaceInput = document.getElementById("issuePlace");
-      if (issuePlaceInput) issuePlaceInput.value = "Sài Gòn"; // Giả lập
-      const permanentAddressInput = document.getElementById("permanentAddress");
-      if (permanentAddressInput) permanentAddressInput.value = "123 Long Hải"; // Giả lập
-      const currentAddressInput = document.getElementById("currentAddress");
-      if (currentAddressInput) currentAddressInput.value = "456 Long Hải"; // Giả lập
-      const personalEmailInput = document.getElementById("personalEmail");
-      if (personalEmailInput) personalEmailInput.value = "example@gmail.com"; // Giả lập
-      const companyEmailInput = document.getElementById("companyEmail");
-      if (companyEmailInput) companyEmailInput.value = "example@dongjin.com"; // Giả lập
-      const positionInput = document.getElementById("position");
-      if (positionInput) positionInput.value = "Công nhân"; // Giả lập
-      const educationSelect = document.getElementById("education");
-      if (educationSelect) educationSelect.value = "THPT"; // Giả lập
-      const specializationInput = document.getElementById("specialization");
-      if (specializationInput) specializationInput.value = "Điện tử"; // Giả lập
-      const contractSignDateInput = document.getElementById("contractSignDate");
-      if (contractSignDateInput) contractSignDateInput.value = "2020-06-01"; // Giả lập
-      const taxCodeInput = document.getElementById("taxCode");
-      if (taxCodeInput) taxCodeInput.value = "123456789"; // Giả lập
-      const bankNameInput = document.getElementById("bankName");
-      if (bankNameInput) bankNameInput.value = "MSB Bank"; // Giả lập
-      const bankAccountInput = document.getElementById("bankAccount");
-      if (bankAccountInput) bankAccountInput.value = "123456789"; // Giả lập
-      new bootstrap.Modal(document.getElementById("employeeModal")).show();
-    }, 100);
-  }
+      setTimeout(() => {
+        const empCodeInput = document.getElementById("empCode");
+        if (empCodeInput) empCodeInput.value = cells[0].textContent;
+        const fullNameInput = document.getElementById("fullName");
+        if (fullNameInput) fullNameInput.value = cells[1].textContent;
+        const employeeTypeSelect = document.getElementById("employeeType");
+        if (employeeTypeSelect) employeeTypeSelect.value = cells[2].textContent;
+        updateDepartmentOptions();
+        const departmentSelect = document.getElementById("department");
+        if (departmentSelect) departmentSelect.value = cells[3].textContent;
+        toggleLineField();
+        const lineSelect = document.getElementById("line");
+        if (lineSelect) lineSelect.value = cells[4].textContent !== "-" ? cells[4].textContent : "";
+        const interviewDateInput = document.getElementById("interviewDate");
+        if (interviewDateInput) interviewDateInput.value = cells[5].textContent;
+        const joinDateInput = document.getElementById("joinDate");
+        if (joinDateInput) joinDateInput.value = cells[6].textContent;
+        const cccdInput = document.getElementById("cccd");
+        if (cccdInput) cccdInput.value = cells[7].textContent;
+        const phoneInput = document.getElementById("phone");
+        if (phoneInput) phoneInput.value = cells[8].textContent;
+        const contract = cells[9].textContent;
+        const contractTypeSelect = document.getElementById("contractType");
+        if (contractTypeSelect) contractTypeSelect.value = contract.includes("Vô thời hạn") ? "Vô thời hạn" : "Có thời hạn";
+        const contractStartInput = document.getElementById("contractStart");
+        if (contractStartInput) contractStartInput.value = contract.match(/\d{4}-\d{2}-\d{2}/) ? contract.match(/\d{4}-\d{2}-\d{2}/)[0] : "";
+        const contractEndInput = document.getElementById("contractEnd");
+        if (contractEndInput) contractEndInput.value = contract.match(/ - \d{4}-\d{2}-\d{2}/) ? contract.match(/\d{4}-\d{2}-\d{2}/)[1] : "";
+        const bhxhNumberInput = document.getElementById("bhxhNumber");
+        if (bhxhNumberInput) bhxhNumberInput.value = cells[10].textContent;
+        const tempAgencyInput = document.getElementById("tempAgency");
+        if (tempAgencyInput) tempAgencyInput.value = cells[11].textContent !== "-" ? cells[11].textContent : "";
+        const activeStatusSelect = document.getElementById("activeStatus");
+        if (activeStatusSelect) activeStatusSelect.value = cells[12].textContent === "Not Active" ? "Not Active" : "Active";
+        const genderSelect = document.getElementById("gender");
+        if (genderSelect) genderSelect.value = "Nam"; // Giả lập
+        const dobInput = document.getElementById("dob");
+        if (dobInput) dobInput.value = "1990-01-01"; // Giả lập
+        const maritalStatusSelect = document.getElementById("maritalStatus");
+        if (maritalStatusSelect) maritalStatusSelect.value = "Độc thân"; // Giả lập
+        const dependantsInput = document.getElementById("dependants");
+        if (dependantsInput) dependantsInput.value = "0"; // Giả lập
+        const issueDateInput = document.getElementById("issueDate");
+        if (issueDateInput) issueDateInput.value = "2015-01-01"; // Giả lập
+        const issuePlaceInput = document.getElementById("issuePlace");
+        if (issuePlaceInput) issuePlaceInput.value = "Sài Gòn"; // Giả lập
+        const permanentAddressInput = document.getElementById("permanentAddress");
+        if (permanentAddressInput) permanentAddressInput.value = "123 Long Hải"; // Giả lập
+        const currentAddressInput = document.getElementById("currentAddress");
+        if (currentAddressInput) currentAddressInput.value = "456 Long Hải"; // Giả lập
+        const personalEmailInput = document.getElementById("personalEmail");
+        if (personalEmailInput) personalEmailInput.value = "example@gmail.com"; // Giả lập
+        const companyEmailInput = document.getElementById("companyEmail");
+        if (companyEmailInput) companyEmailInput.value = "example@dongjin.com"; // Giả lập
+        const positionInput = document.getElementById("position");
+        if (positionInput) positionInput.value = "Công nhân"; // Giả lập
+        const educationSelect = document.getElementById("education");
+        if (educationSelect) educationSelect.value = "THPT"; // Giả lập
+        const specializationInput = document.getElementById("specialization");
+        if (specializationInput) specializationInput.value = "Điện tử"; // Giả lập
+        const contractSignDateInput = document.getElementById("contractSignDate");
+        if (contractSignDateInput) contractSignDateInput.value = "2020-06-01"; // Giả lập
+        const taxCodeInput = document.getElementById("taxCode");
+        if (taxCodeInput) taxCodeInput.value = "123456789"; // Giả lập
+        const bankNameInput = document.getElementById("bankName");
+        if (bankNameInput) bankNameInput.value = "MSB Bank"; // Giả lập
+        const bankAccountInput = document.getElementById("bankAccount");
+        if (bankAccountInput) bankAccountInput.value = "123456789"; // Giả lập
+        new bootstrap.Modal(document.getElementById("employeeModal")).show();
+      }, 100);
+    }
 
-  // Update Employee
-  function updateEmployee() {
-    const form = document.getElementById("employeeForm");
-    if (form.checkValidity()) {
-      const rowIndex = document.getElementById("editRowIndex").value;
-      const row = document.getElementById("employeeTable").rows[rowIndex];
-      row.cells[1].textContent = document.getElementById("fullName").value;
-      row.cells[2].textContent = document.getElementById("employeeType").value;
-      row.cells[3].textContent = document.getElementById("department").value;
-      row.cells[4].textContent = document.getElementById("line").value || "-";
-      row.cells[5].textContent = document.getElementById("interviewDate").value;
-      row.cells[6].textContent = document.getElementById("joinDate").value;
-      row.cells[7].textContent = document.getElementById("cccd").value;
-      row.cells[8].textContent = document.getElementById("phone").value;
-      row.cells[9].textContent =
-        document.getElementById("contractType").value === "Vô thời hạn"
-          ? "Vô thời hạn"
-          : "( " +
+    // Update Employee
+    function updateEmployee() {
+      const form = document.getElementById("employeeForm");
+      if (form.checkValidity()) {
+        const rowIndex = document.getElementById("editRowIndex").value;
+        const row = document.getElementById("employeeTable").rows[rowIndex];
+        row.cells[1].textContent = document.getElementById("fullName").value;
+        row.cells[2].textContent = document.getElementById("employeeType").value;
+        row.cells[3].textContent = document.getElementById("department").value;
+        row.cells[4].textContent = document.getElementById("line").value || "-";
+        row.cells[5].textContent = document.getElementById("interviewDate").value;
+        row.cells[6].textContent = document.getElementById("joinDate").value;
+        row.cells[7].textContent = document.getElementById("cccd").value;
+        row.cells[8].textContent = document.getElementById("phone").value;
+        row.cells[9].textContent =
+          document.getElementById("contractType").value === "Vô thời hạn"
+            ? "Vô thời hạn"
+            : "( " +
             document.getElementById("contractStart").value +
             " - " +
             (document.getElementById("contractEnd").value || "") +
             " )";
-      row.cells[10].textContent = document.getElementById("bhxhNumber").value;
-      row.cells[11].textContent =
-        document.getElementById("tempAgency").value || "-";
-      row.cells[12].textContent = document.getElementById("activeStatus").value;
+        row.cells[10].textContent = document.getElementById("bhxhNumber").value;
+        row.cells[11].textContent =
+          document.getElementById("tempAgency").value || "-";
+        row.cells[12].textContent = document.getElementById("activeStatus").value;
+        row.cells[14].textContent = new Date().toISOString().slice(0, 10);
+        row.cells[15].textContent = "hr_admin";
+        alert("Nhân viên đã được sửa! (Prototype - Dữ liệu không lưu thực tế)");
+        document
+          .getElementById("employeeModal")
+          .querySelector(".btn-close")
+          .click();
+        form.reset();
+        resetModal("add");
+      } else {
+        form.reportValidity();
+      }
+    }
+
+    // View Employee Single Tab
+    function viewEmployeeSingleTab(button) {
+      console.log("Hàm viewEmployeeSingleTab được gọi!");
+      const row = button.parentNode.parentNode;
+      if (!row || !row.cells) {
+        console.error("Không tìm thấy row hoặc cells!");
+        alert("Lỗi: Không thể lấy dữ liệu từ hàng. Vui lòng thử lại.");
+        return;
+      }
+
+      const cells = row.cells;
+      const empCode = cells[0].textContent.trim();
+      const fullName = cells[1].textContent.trim();
+      const employeeType = cells[2].textContent.trim();
+      const department = cells[3].textContent.trim();
+      const line = cells[4].textContent.trim();
+      const interviewDate = cells[5].textContent.trim();
+      const joinDate = cells[6].textContent.trim();
+      const cccd = cells[7].textContent.trim();
+      const phone = cells[8].textContent.trim();
+      const contract = cells[9].textContent.trim();
+      const bhxhNumber = cells[10].textContent.trim();
+      const tempAgency = cells[11].textContent.trim();
+      const activeStatus = cells[12].textContent.trim();
+
+      let contractType = "Vô thời hạn";
+      let contractStart = "";
+      let contractEnd = "";
+      if (contract.includes("Vô thời hạn")) {
+        contractType = "Vô thời hạn";
+      } else {
+        const dates = contract.match(/\d{4}-\d{2}-\d{2}/g) || [];
+        if (dates.length >= 1) contractStart = dates[0];
+        if (dates.length >= 2) contractEnd = dates[1];
+      }
+
+      const gender = fullName.includes("Thị") ? "Nữ" : "Nam";
+      const dob = "1990-01-01";
+      const maritalStatus = "Độc thân";
+      const dependants = "0";
+      const issueDate = "2015-01-01";
+      const issuePlace = "Sài Gòn";
+      const permanentAddress = "123 Long Hải";
+      const currentAddress = "456 Long Hải";
+      const personalEmail = "example@gmail.com";
+      const companyEmail = "example@dongjin.com";
+      const position = "Công nhân";
+      const education = "THPT";
+      const specialization = "Điện tử";
+      const contractSignDate = "2020-06-01";
+      const taxCode = "123456789";
+      const bankName = "MB Bank";
+      const bankAccount = "123456789";
+
+      let html = `<form id='singleTabForm'>`;
+      html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Họ Tên</label><input type='text' class='form-control' id='stFullName' value='${fullName}' required></div>`;
+      html += `<div class='col-md-6 mb-3'><label class='form-label required'>Giới Tính</label><select class='form-select' id='stGender'><option value='Nam' ${gender === "Nam" ? "selected" : ""}>Nam</option><option value='Nữ' ${gender === "Nữ" ? "selected" : ""}>Nữ</option></select></div></div>`;
+      html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Ngày Sinh</label><input type='date' class='form-control' id='stDob' value='${dob}' required></div>`;
+      html += `<div class='col-md-6 mb-3'><label class='form-label required'>Tình Trạng Hôn Nhân</label><select class='form-select' id='stMaritalStatus'><option value='Độc thân' ${maritalStatus === "Độc thân" ? "selected" : ""}>Độc thân</option><option value='Đã kết hôn' ${maritalStatus === "Đã kết hôn" ? "selected" : ""}>Đã kết hôn</option></select></div></div>`;
+      html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label'>Số Người Phụ Thuộc</label><input type='number' class='form-control' id='stDependants' value='${dependants}'></div>`;
+      html += `<div class='col-md-6 mb-3'><label class='form-label required'>CCCD</label><input type='text' class='form-control' id='stCccd' value='${cccd}' required></div></div>`;
+      html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Ngày Cấp CCCD</label><input type='date' class='form-control' id='stIssueDate' value='${issueDate}' required></div>`;
+      html += `<div class='col-md-6 mb-3'><label class='form-label required'>Nơi Cấp CCCD</label><input type='text' class='form-control' id='stIssuePlace' value='${issuePlace}' required></div></div>`;
+      html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Địa Chỉ Thường Trú</label><input type='text' class='form-control' id='stPermanentAddress' value='${permanentAddress}' required></div>`;
+      html += `<div class='col-md-6 mb-3'><label class='form-label required'>Địa Chỉ Hiện Tại</label><input type='text' class='form-control' id='stCurrentAddress' value='${currentAddress}' required></div></div>`;
+      html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Số Điện Thoại</label><input type='tel' class='form-control' id='stPhone' value='${phone}' required></div>`;
+      html += `<div class='col-md-6 mb-3'><label class='form-label'>Email Cá Nhân</label><input type='email' class='form-control' id='stPersonalEmail' value='${personalEmail}'></div></div>`;
+      html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Mã Nhân Viên</label><input type='text' class='form-control' id='stEmpCode' value='${empCode}' readonly></div>`;
+      html += `<div class='col-md-6 mb-3'><label class='form-label required'>Loại Nhân Viên</label><input type='text' class='form-control' id='stEmployeeType' value='${employeeType}' required></div></div>`;
+      html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Bộ Phận</label><input type='text' class='form-control' id='stDepartment' value='${department}' required></div>`;
+      html += `<div class='col-md-6 mb-3'><label class='form-label'>Line (FA)</label><input type='text' class='form-control' id='stLine' value='${line === "-" ? "" : line}'></div></div>`;
+      html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Vị Trí Công Việc</label><input type='text' class='form-control' id='stPosition' value='${position}' required></div>`;
+      html += `<div class='col-md-6 mb-3'><label class='form-label required'>Trình Độ Học Vấn</label><input type='text' class='form-control' id='stEducation' value='${education}' required></div></div>`;
+      html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label'>Chuyên Môn</label><input type='text' class='form-control' id='stSpecialization' value='${specialization}'></div>`;
+      html += `<div class='col-md-6 mb-3'><label class='form-label'>Email Công Ty</label><input type='email' class='form-control' id='stCompanyEmail' value='${companyEmail}'></div></div>`;
+      html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Ngày Phỏng Vấn</label><input type='date' class='form-control' id='stInterviewDate' value='${interviewDate}' required></div>`;
+      html += `<div class='col-md-6 mb-3'><label class='form-label required'>Ngày Nhận Việc</label><input type='date' class='form-control' id='stJoinDate' value='${joinDate}' required></div></div>`;
+      html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label'>Đơn Vị Thời Vụ</label><input type='text' class='form-control' id='stTempAgency' value='${tempAgency === "-" ? "" : tempAgency}'></div>`;
+      html += `<div class='col-md-6 mb-3'><label class='form-label required'>Active</label><select class='form-select' id='stActiveStatus'><option value='Active' ${activeStatus === "Active" ? "selected" : ""}>Active</option><option value='Not Active' ${activeStatus === "Not Active" ? "selected" : ""}>Not Active</option></select></div></div>`;
+      html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Loại Hợp Đồng</label><input type='text' class='form-control' id='stContractType' value='${contractType}' required></div>`;
+      html += `<div class='col-md-6 mb-3'><label class='form-label required'>Ngày Ký Hợp Đồng</label><input type='date' class='form-control' id='stContractSignDate' value='${contractSignDate}' required></div></div>`;
+      html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Ngày Bắt Đầu HĐ</label><input type='date' class='form-control' id='stContractStart' value='${contractStart}' required></div>`;
+      html += `<div class='col-md-6 mb-3'><label class='form-label'>Ngày Kết Thúc HĐ</label><input type='date' class='form-control' id='stContractEnd' value='${contractEnd}'></div></div>`;
+      html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Mã Số BHXH</label><input type='text' class='form-control' id='stBhxhNumber' value='${bhxhNumber}' required></div>`;
+      html += `<div class='col-md-6 mb-3'><label class='form-label required'>Mã Số Thuế</label><input type='text' class='form-control' id='stTaxCode' value='${taxCode}' required></div></div>`;
+      html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Ngân Hàng</label><input type='text' class='form-control' id='stBankName' value='${bankName}' required></div>`;
+      html += `<div class='col-md-6 mb-3'><label class='form-label required'>Số Tài Khoản</label><input type='text' class='form-control' id='stBankAccount' value='${bankAccount}' required></div></div>`;
+      html += `<div class='row'><div class='col-12 text-end'><button type='button' class='btn btn-primary me-2' onclick='saveSingleTab(${row.rowIndex})'>Lưu</button><button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>Đóng</button></div></div>`;
+      html += `</form>`;
+
+      document.getElementById('viewContent').innerHTML = html;
+      new bootstrap.Modal(document.getElementById('viewModal')).show();
+    }
+
+    // Save Single Tab
+    function saveSingleTab(rowIndex) {
+      const table = document.getElementById('employeeTable');
+      const row = table.rows[rowIndex];
+      row.cells[1].textContent = document.getElementById('stFullName').value;
+      row.cells[2].textContent = document.getElementById('stEmployeeType').value;
+      row.cells[3].textContent = document.getElementById('stDepartment').value;
+      row.cells[4].textContent = document.getElementById('stLine').value || "-";
+      row.cells[5].textContent = document.getElementById('stInterviewDate').value;
+      row.cells[6].textContent = document.getElementById('stJoinDate').value;
+      row.cells[7].textContent = document.getElementById('stCccd').value;
+      row.cells[8].textContent = document.getElementById('stPhone').value;
+      row.cells[9].textContent = document.getElementById('stContractType').value === "Vô thời hạn" ? "Vô thời hạn" : "( " + document.getElementById('stContractStart').value + " - " + (document.getElementById('stContractEnd').value || "") + " )";
+      row.cells[10].textContent = document.getElementById('stBhxhNumber').value;
+      row.cells[11].textContent = document.getElementById('stTempAgency').value || "-";
+      row.cells[12].textContent = document.getElementById('stActiveStatus').value;
       row.cells[14].textContent = new Date().toISOString().slice(0, 10);
-      row.cells[15].textContent = "hr_admin";
-      alert("Nhân viên đã được sửa! (Prototype - Dữ liệu không lưu thực tế)");
-      document
-        .getElementById("employeeModal")
-        .querySelector(".btn-close")
-        .click();
-      form.reset();
-      resetModal("add");
-    } else {
-      form.reportValidity();
-    }
-  }
-
-  // View Employee Single Tab
-  function viewEmployeeSingleTab(button) {
-    console.log("Hàm viewEmployeeSingleTab được gọi!");
-    const row = button.parentNode.parentNode;
-    if (!row || !row.cells) {
-      console.error("Không tìm thấy row hoặc cells!");
-      alert("Lỗi: Không thể lấy dữ liệu từ hàng. Vui lòng thử lại.");
-      return;
+      row.cells[15].textContent = 'hr_admin';
+      document.getElementById('viewModal').querySelector('.btn-close').click();
     }
 
-    const cells = row.cells;
-    const empCode = cells[0].textContent.trim();
-    const fullName = cells[1].textContent.trim();
-    const employeeType = cells[2].textContent.trim();
-    const department = cells[3].textContent.trim();
-    const line = cells[4].textContent.trim();
-    const interviewDate = cells[5].textContent.trim();
-    const joinDate = cells[6].textContent.trim();
-    const cccd = cells[7].textContent.trim();
-    const phone = cells[8].textContent.trim();
-    const contract = cells[9].textContent.trim();
-    const bhxhNumber = cells[10].textContent.trim();
-    const tempAgency = cells[11].textContent.trim();
-    const activeStatus = cells[12].textContent.trim();
-
-    let contractType = "Vô thời hạn";
-    let contractStart = "";
-    let contractEnd = "";
-    if (contract.includes("Vô thời hạn")) {
-      contractType = "Vô thời hạn";
-    } else {
-      const dates = contract.match(/\d{4}-\d{2}-\d{2}/g) || [];
-      if (dates.length >= 1) contractStart = dates[0];
-      if (dates.length >= 2) contractEnd = dates[1];
+    // Delete Employee
+    function deleteEmployee(button) {
+      if (confirm("Xác nhận xóa nhân viên?")) {
+        button.parentNode.parentNode.remove();
+      }
     }
 
-    const gender = fullName.includes("Thị") ? "Nữ" : "Nam";
-    const dob = "1990-01-01";
-    const maritalStatus = "Độc thân";
-    const dependants = "0";
-    const issueDate = "2015-01-01";
-    const issuePlace = "Sài Gòn";
-    const permanentAddress = "123 Long Hải";
-    const currentAddress = "456 Long Hải";
-    const personalEmail = "example@gmail.com";
-    const companyEmail = "example@dongjin.com";
-    const position = "Công nhân";
-    const education = "THPT";
-    const specialization = "Điện tử";
-    const contractSignDate = "2020-06-01";
-    const taxCode = "123456789";
-    const bankName = "MB Bank";
-    const bankAccount = "123456789";
-
-    let html = `<form id='singleTabForm'>`;
-    html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Họ Tên</label><input type='text' class='form-control' id='stFullName' value='${fullName}' required></div>`;
-    html += `<div class='col-md-6 mb-3'><label class='form-label required'>Giới Tính</label><select class='form-select' id='stGender'><option value='Nam' ${gender === "Nam" ? "selected" : ""}>Nam</option><option value='Nữ' ${gender === "Nữ" ? "selected" : ""}>Nữ</option></select></div></div>`;
-    html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Ngày Sinh</label><input type='date' class='form-control' id='stDob' value='${dob}' required></div>`;
-    html += `<div class='col-md-6 mb-3'><label class='form-label required'>Tình Trạng Hôn Nhân</label><select class='form-select' id='stMaritalStatus'><option value='Độc thân' ${maritalStatus === "Độc thân" ? "selected" : ""}>Độc thân</option><option value='Đã kết hôn' ${maritalStatus === "Đã kết hôn" ? "selected" : ""}>Đã kết hôn</option></select></div></div>`;
-    html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label'>Số Người Phụ Thuộc</label><input type='number' class='form-control' id='stDependants' value='${dependants}'></div>`;
-    html += `<div class='col-md-6 mb-3'><label class='form-label required'>CCCD</label><input type='text' class='form-control' id='stCccd' value='${cccd}' required></div></div>`;
-    html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Ngày Cấp CCCD</label><input type='date' class='form-control' id='stIssueDate' value='${issueDate}' required></div>`;
-    html += `<div class='col-md-6 mb-3'><label class='form-label required'>Nơi Cấp CCCD</label><input type='text' class='form-control' id='stIssuePlace' value='${issuePlace}' required></div></div>`;
-    html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Địa Chỉ Thường Trú</label><input type='text' class='form-control' id='stPermanentAddress' value='${permanentAddress}' required></div>`;
-    html += `<div class='col-md-6 mb-3'><label class='form-label required'>Địa Chỉ Hiện Tại</label><input type='text' class='form-control' id='stCurrentAddress' value='${currentAddress}' required></div></div>`;
-    html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Số Điện Thoại</label><input type='tel' class='form-control' id='stPhone' value='${phone}' required></div>`;
-    html += `<div class='col-md-6 mb-3'><label class='form-label'>Email Cá Nhân</label><input type='email' class='form-control' id='stPersonalEmail' value='${personalEmail}'></div></div>`;
-    html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Mã Nhân Viên</label><input type='text' class='form-control' id='stEmpCode' value='${empCode}' readonly></div>`;
-    html += `<div class='col-md-6 mb-3'><label class='form-label required'>Loại Nhân Viên</label><input type='text' class='form-control' id='stEmployeeType' value='${employeeType}' required></div></div>`;
-    html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Bộ Phận</label><input type='text' class='form-control' id='stDepartment' value='${department}' required></div>`;
-    html += `<div class='col-md-6 mb-3'><label class='form-label'>Line (FA)</label><input type='text' class='form-control' id='stLine' value='${line === "-" ? "" : line}'></div></div>`;
-    html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Vị Trí Công Việc</label><input type='text' class='form-control' id='stPosition' value='${position}' required></div>`;
-    html += `<div class='col-md-6 mb-3'><label class='form-label required'>Trình Độ Học Vấn</label><input type='text' class='form-control' id='stEducation' value='${education}' required></div></div>`;
-    html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label'>Chuyên Môn</label><input type='text' class='form-control' id='stSpecialization' value='${specialization}'></div>`;
-    html += `<div class='col-md-6 mb-3'><label class='form-label'>Email Công Ty</label><input type='email' class='form-control' id='stCompanyEmail' value='${companyEmail}'></div></div>`;
-    html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Ngày Phỏng Vấn</label><input type='date' class='form-control' id='stInterviewDate' value='${interviewDate}' required></div>`;
-    html += `<div class='col-md-6 mb-3'><label class='form-label required'>Ngày Nhận Việc</label><input type='date' class='form-control' id='stJoinDate' value='${joinDate}' required></div></div>`;
-    html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label'>Đơn Vị Thời Vụ</label><input type='text' class='form-control' id='stTempAgency' value='${tempAgency === "-" ? "" : tempAgency}'></div>`;
-    html += `<div class='col-md-6 mb-3'><label class='form-label required'>Active</label><select class='form-select' id='stActiveStatus'><option value='Active' ${activeStatus === "Active" ? "selected" : ""}>Active</option><option value='Not Active' ${activeStatus === "Not Active" ? "selected" : ""}>Not Active</option></select></div></div>`;
-    html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Loại Hợp Đồng</label><input type='text' class='form-control' id='stContractType' value='${contractType}' required></div>`;
-    html += `<div class='col-md-6 mb-3'><label class='form-label required'>Ngày Ký Hợp Đồng</label><input type='date' class='form-control' id='stContractSignDate' value='${contractSignDate}' required></div></div>`;
-    html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Ngày Bắt Đầu HĐ</label><input type='date' class='form-control' id='stContractStart' value='${contractStart}' required></div>`;
-    html += `<div class='col-md-6 mb-3'><label class='form-label'>Ngày Kết Thúc HĐ</label><input type='date' class='form-control' id='stContractEnd' value='${contractEnd}'></div></div>`;
-    html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Mã Số BHXH</label><input type='text' class='form-control' id='stBhxhNumber' value='${bhxhNumber}' required></div>`;
-    html += `<div class='col-md-6 mb-3'><label class='form-label required'>Mã Số Thuế</label><input type='text' class='form-control' id='stTaxCode' value='${taxCode}' required></div></div>`;
-    html += `<div class='row mb-2'><div class='col-md-6 mb-3'><label class='form-label required'>Ngân Hàng</label><input type='text' class='form-control' id='stBankName' value='${bankName}' required></div>`;
-    html += `<div class='col-md-6 mb-3'><label class='form-label required'>Số Tài Khoản</label><input type='text' class='form-control' id='stBankAccount' value='${bankAccount}' required></div></div>`;
-    html += `<div class='row'><div class='col-12 text-end'><button type='button' class='btn btn-primary me-2' onclick='saveSingleTab(${row.rowIndex})'>Lưu</button><button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>Đóng</button></div></div>`;
-    html += `</form>`;
-
-    document.getElementById('viewContent').innerHTML = html;
-    new bootstrap.Modal(document.getElementById('viewModal')).show();
-  }
-
-  // Save Single Tab
-  function saveSingleTab(rowIndex) {
-    const table = document.getElementById('employeeTable');
-    const row = table.rows[rowIndex];
-    row.cells[1].textContent = document.getElementById('stFullName').value;
-    row.cells[2].textContent = document.getElementById('stEmployeeType').value;
-    row.cells[3].textContent = document.getElementById('stDepartment').value;
-    row.cells[4].textContent = document.getElementById('stLine').value || "-";
-    row.cells[5].textContent = document.getElementById('stInterviewDate').value;
-    row.cells[6].textContent = document.getElementById('stJoinDate').value;
-    row.cells[7].textContent = document.getElementById('stCccd').value;
-    row.cells[8].textContent = document.getElementById('stPhone').value;
-    row.cells[9].textContent = document.getElementById('stContractType').value === "Vô thời hạn" ? "Vô thời hạn" : "( " + document.getElementById('stContractStart').value + " - " + (document.getElementById('stContractEnd').value || "") + " )";
-    row.cells[10].textContent = document.getElementById('stBhxhNumber').value;
-    row.cells[11].textContent = document.getElementById('stTempAgency').value || "-";
-    row.cells[12].textContent = document.getElementById('stActiveStatus').value;
-    row.cells[14].textContent = new Date().toISOString().slice(0, 10);
-    row.cells[15].textContent = 'hr_admin';
-    document.getElementById('viewModal').querySelector('.btn-close').click();
-  }
-
-  // Delete Employee
-  function deleteEmployee(button) {
-    if (confirm("Xác nhận xóa nhân viên?")) {
-      button.parentNode.parentNode.remove();
+    // Import Excel
+    function importExcel() {
+      alert("Import file Excel! (Prototype - Chưa tích hợp upload file)");
     }
-  }
 
-  // Import Excel
-  function importExcel() {
-    alert("Import file Excel! (Prototype - Chưa tích hợp upload file)");
-  }
+    // Export Report
+    function exportReport() {
+      alert("Xuất báo cáo nhân viên! (Prototype - Chưa tích hợp xuất file Excel)");
+    }
 
-  // Export Report
-  function exportReport() {
-    alert("Xuất báo cáo nhân viên! (Prototype - Chưa tích hợp xuất file Excel)");
-  }
-
-  // View Request
-  function viewRequest(button) {
-    const row = button.parentNode.parentNode;
-    const empCode = row.cells[0].textContent;
-    const fullName = row.cells[1].textContent;
-    const submitDate = row.cells[2].textContent;
-    const mockData = `
+    // View Request
+    function viewRequest(button) {
+      const row = button.parentNode.parentNode;
+      const empCode = row.cells[0].textContent;
+      const fullName = row.cells[1].textContent;
+      const submitDate = row.cells[2].textContent;
+      const mockData = `
       <h5>Thông tin chi tiết cho ${fullName} (Mã NV: ${empCode})</h5>
       <p><strong>Ngày Submit:</strong> ${submitDate}</p>
       <p><strong>Họ Tên:</strong> ${fullName}</p>
@@ -1655,18 +1308,21 @@
       <p><strong>Mã Số Thuế:</strong> 123456789</p>
       <p><strong>Ngân Hàng:</strong> MB Bank</p>
       <p><strong>Số Tài Khoản:</strong> 123456789</p>
+      <p><strong>Ảnh chân dung:</strong> link hình ảnh <a/> </p>
+      <p><strong>CCCD Mặt Trước:</strong> link hình ảnh</p>
+      <p><strong>CCCD Mặt Sau:</strong> link hình ảnh</p>
     `;
-    document.getElementById("viewContent").innerHTML = mockData;
-  }
+      document.getElementById("viewContent").innerHTML = mockData;
+    }
 
-  // Approve Request
-  function approveRequest(button) {
-    if (confirm("Xác nhận phê duyệt yêu cầu này?")) {
-      const row = button.parentNode.parentNode;
-      const empCode = row.cells[0].textContent;
-      const fullName = row.cells[1].textContent;
-      const newRow = document.getElementById("employeeTable").insertRow();
-      newRow.innerHTML = `
+    // Approve Request
+    function approveRequest(button) {
+      if (confirm("Xác nhận phê duyệt yêu cầu này?")) {
+        const row = button.parentNode.parentNode;
+        const empCode = row.cells[0].textContent;
+        const fullName = row.cells[1].textContent;
+        const newRow = document.getElementById("employeeTable").insertRow();
+        newRow.innerHTML = `
         <td>${empCode}</td>
         <td>${fullName}</td>
         <td>Thời vụ</td>
@@ -1688,19 +1344,20 @@
           <button class="btn btn-sm btn-danger" onclick="deleteEmployee(this)">Xóa</button>
         </td>
       `;
-      row.remove();
-      alert("Yêu cầu đã được phê duyệt! (Prototype)");
+        row.remove();
+        alert("Yêu cầu đã được phê duyệt! (Prototype)");
+      }
     }
-  }
 
-  // Reject Request
-  function rejectRequest(button) {
-    if (confirm("Xác nhận từ chối yêu cầu này?")) {
-      const row = button.parentNode.parentNode;
-      row.remove();
-      alert("Yêu cầu đã bị từ chối! (Prototype)");
+    // Reject Request
+    function rejectRequest(button) {
+      if (confirm("Xác nhận từ chối yêu cầu này?")) {
+        const row = button.parentNode.parentNode;
+        row.remove();
+        alert("Yêu cầu đã bị từ chối! (Prototype)");
+      }
     }
-  }
-</script>
-  </body>
+  </script>
+</body>
+
 </html>
